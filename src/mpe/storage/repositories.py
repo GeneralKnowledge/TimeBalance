@@ -1,4 +1,6 @@
-"""Data access for ingestion and the point-in-time history accessor.
+"""Data access for ingestion and the strict point-in-time history accessor.
+
+Reconstructed (backfill-based) replay lives separately in :mod:`mpe.storage.replay`.
 
 Observations are append-only: a value that differs from the stored latest version is written as
 a new row with ``version + 1``; an identical value is skipped, so re-running ingestion is a no-op.
@@ -243,7 +245,10 @@ def get_history(
 
     Keeps rows with ``available_at <= as_of`` and ``retrieved_at <= as_of``; for each
     (timestamp, source) returns the highest such version, so a later correction is invisible to a
-    decision made before it was fetched. This is the only sanctioned read path for history.
+    decision made before it was fetched. This is strict point-in-time replay: rows backfilled
+    after ``as_of`` are excluded even if they describe earlier events. For research on backfilled
+    data use :func:`mpe.storage.replay.get_reconstructed_history`, which is labelled as such.
+    These two are the only sanctioned read paths for history.
     """
     if as_of.tzinfo is None:
         raise ValueError("as_of must be timezone-aware UTC")
@@ -273,6 +278,7 @@ def get_history(
     if not df.empty:
         df["timestamp"] = pd.to_datetime(df["timestamp"], utc=True)
         df["available_at"] = pd.to_datetime(df["available_at"], utc=True)
+    df.attrs["knowledge_mode"] = "strict_point_in_time"  # == replay.KnowledgeMode.STRICT
     return df
 
 
