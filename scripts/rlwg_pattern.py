@@ -7,11 +7,12 @@ from live_updown import gamma_market
 from replay_updown import binance_range
 
 src = Path(sys.argv[1]); days = float(sys.argv[2]) if len(sys.argv) > 2 else 14
+prefix = sys.argv[3] if len(sys.argv) > 3 else "btc-updown-15m"; W = 300 if prefix.endswith("5m") else 900
 r = json.loads(src.read_text())
 since = time.time() - days * 86400
-tr = [x for x in r if x["type"] == "TRADE" and x["slug"].startswith("btc-updown-15m-") and x["timestamp"] >= since]
+tr = [x for x in r if x["type"] == "TRADE" and x["slug"].startswith(prefix + "-") and x["timestamp"] >= since]
 slugs = sorted({x["slug"] for x in tr})
-cache = src.with_suffix(".outcomes.json")
+cache = src.with_suffix(f".{prefix}.outcomes.json")
 oc = json.loads(cache.read_text()) if cache.exists() else {}
 def res(s):
     m = gamma_market(s)
@@ -30,21 +31,22 @@ for x in tr:
     i0 = kt[start * 1000]; il = i0 + (t - start) // 60 - 1  # last completed minute before the trade
     if il < 60 or il >= len(k): continue
     move = math.log(k[il, 2] / k[i0, 1]) if t - start >= 60 else 0.0
-    sig = np.diff(np.log(k[il - 60 : il + 1, 2])).std() * math.sqrt(max((start + 900 - t) / 60, 0.5))
+    sig = np.diff(np.log(k[il - 60 : il + 1, 2])).std() * math.sqrt(max((start + W - t) / 60, 0.5))
     z = move / sig  # standardized distance from the open, signed toward Up
     side_up = x["outcome_index"] == 0
     rows.append(dict(sec=t - start, price=x["price"], usdc=x["usdc_size"], size=x["size"], buy=x["side"] == "BUY",
                      won=int(x["outcome_index"] == w), with_move=(z > 0) == side_up, z=z * (1 if side_up else -1)))
 b = [q for q in rows if q["buy"]]
-print(f"BTC 15m trades last {days:g} days: {len(tr)}, analysed buys: {len(b)}, markets: {len(slugs)}")
+print(f"{prefix} trades last {days:g} days: {len(tr)}, analysed buys: {len(b)}, markets: {len(slugs)}")
 def summ(sel, label):
     if not sel: return
     cost = sum(q["usdc"] for q in sel); pay = sum(q["size"] * q["won"] for q in sel)
     print(f"  {label:34s} n={len(sel):6d} avg price {np.mean([q['price'] for q in sel]):.3f} win {np.mean([q['won'] for q in sel]):.3f}"
           f" cost ${cost:9.0f} pnl ${pay - cost:8.0f} ({(pay - cost) / cost:+.1%})")
 summ(b, "all buys")
-for lo, hi in ((0, 300), (300, 600), (600, 780), (780, 900)):
-    summ([q for q in b if lo <= q["sec"] < hi], f"entered {lo // 60}-{hi // 60} min into window")
+for f0, f1 in ((0, 1 / 3), (1 / 3, 2 / 3), (2 / 3, 13 / 15), (13 / 15, 1.01)):
+    lo, hi = f0 * W, f1 * W
+    summ([q for q in b if lo <= q["sec"] < hi], f"entered {lo / 60:.1f}-{min(hi, W) / 60:.1f} min in")
 for lo, hi in ((0, .5), (.5, .8), (.8, .9), (.9, .95), (.95, 1.01)):
     summ([q for q in b if lo <= q["price"] < hi], f"price {lo:.2f}-{hi:.2f}")
 summ([q for q in b if q["with_move"]], "bought the side already ahead")
