@@ -10,6 +10,7 @@ import json
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from datetime import datetime
+from decimal import Decimal
 from typing import Self
 
 import pandas as pd
@@ -137,10 +138,18 @@ class WriteStats:
         return {"inserted": self.inserted, "unchanged": self.unchanged, "corrected": self.corrected}
 
 
-def _same(a, b) -> bool:
+def _same(a, b, rel_tol: Decimal | None = None) -> bool:
     if a is None or b is None:
         return a is None and b is None
+    if rel_tol is not None and a != b:
+        return abs(a - b) <= rel_tol * max(abs(a), abs(b))
     return a == b  # Decimal('1.50') == Decimal('1.5')
+
+
+# Source noise that is not a correction. Yahoo recomputes adj_close on every request and the
+# 7th significant digit wobbles (84.5923 vs 84.59229); a real dividend re-adjustment moves it by
+# far more than 1e-5 relative.
+SOURCE_TOLERANCES: dict[str, dict[str, Decimal]] = {"yfinance": {"adj_close": Decimal("1e-5")}}
 
 
 def write_observations(session: Session, asset_id: int, records: Sequence[ObservationRecord]) -> WriteStats:
@@ -177,7 +186,8 @@ def write_observations(session: Session, asset_id: int, records: Sequence[Observ
                 continue  # duplicates inside one batch are reported by validation, stored once
             seen.add(r.timestamp)
             old = existing.get(r.timestamp)
-            if old is not None and all(_same(getattr(old, k), v) for k, v in r.values().items()):
+            tol = SOURCE_TOLERANCES.get(source, {})
+            if old is not None and all(_same(getattr(old, k), v, tol.get(k)) for k, v in r.values().items()):
                 stats.unchanged += 1
                 continue
             version = 1 if old is None else old.version + 1

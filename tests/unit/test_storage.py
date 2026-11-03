@@ -147,3 +147,18 @@ def test_request_budget_persists_and_stops(tmp_path):
         b2.consume("polymarket")
     clock.advance(days=1)
     b2.consume("polymarket")  # a new UTC day has a fresh budget
+
+
+def test_yahoo_adj_close_wobble_is_not_a_correction(tmp_path):
+    _, factory = db(tmp_path)
+    t1 = T + timedelta(hours=2)
+
+    def r(adj):
+        return ObservationRecord(symbol="SPY", timestamp=T, interval="1d", source="yfinance", retrieved_at=t1,
+                                 available_at=T, close=to_decimal("113.63"), adj_close=to_decimal(adj))  # fmt: skip
+
+    with factory() as s:
+        a = R.get_or_create_asset(s, Instrument("SPY", "yfinance", "etf"))
+        R.write_observations(s, a.id, [r("84.5923")])
+        assert R.write_observations(s, a.id, [r("84.59229")]).unchanged == 1  # last-digit noise
+        assert R.write_observations(s, a.id, [r("84.41")]).corrected == 1  # a real re-adjustment
