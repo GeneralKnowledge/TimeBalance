@@ -5,6 +5,7 @@ mpe ingest backfill [--only stocks|polymarket] [--symbols SPY,QQQ]
 mpe ingest update   [--only stocks|polymarket] [--slot-minutes 30]
 mpe data health     [--json]
 mpe models list
+mpe research ...                    M2 forecasting research (see ``mpe research -h``)
 """
 
 from __future__ import annotations
@@ -200,6 +201,10 @@ def build_parser() -> argparse.ArgumentParser:
     models = sub.add_parser("models")
     models.add_argument("action", choices=["list"])
     models.set_defaults(func=cmd_models)
+
+    from mpe.research.cli import add_parser as add_research
+
+    add_research(sub)
     return p
 
 
