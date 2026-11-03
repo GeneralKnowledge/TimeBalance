@@ -151,10 +151,14 @@ How experiments work is in `docs/M2_RESEARCH_METHODOLOGY.md`.
   `resolved_at`; it cannot exclude origins after an outcome became obvious but before either.
 - **Research results are in a separate database** (`data/research.sqlite3`). The operational
   `forecasts`, `evaluations` and `evaluation_summaries` tables are not used by M2.
-- **No Timestral batching.** The adapter still sends one series per call. Batching would need
-  equal-length contexts or NaN left-padding, and a padded or batched pass is not guaranteed to be
-  bit-identical to the single-series pass, which would weaken the CPU reproducibility guarantee.
-  Measured throughput was sufficient for M2 (see `docs/STATUS.md`), so it is left for later.
+- **No Timestral batching.** The adapter still sends one series per call. Measured on the laptop
+  (5M, CPU, 16 series of 512 points, h = 20): one batch of 16 took 84 ms against 298 ms for 16
+  single calls, but the quantiles differed by up to 2.2e-8. Batching would therefore change
+  forecasts at the float level, and a resumed run (whose batches are made of whatever origins are
+  still pending) would not reproduce an uninterrupted one bit for bit. M2 keeps one series per call;
+  per-call overhead makes small models CPU-bound (5M ran at about 46 forecasts/s on the GPU with
+  the GPU about 33% busy). Batching with a fixed, recorded batch composition is a possible later
+  improvement.
 - **Data changes stop a resume.** Inputs are rebuilt on every run and compared with the stored
   hashes; if the market database changed in a way that alters any context (for example a deleted
   or newly backfilled bar inside a context), the run stops with `DataChanged` rather than mixing
