@@ -71,40 +71,62 @@ def cmd_ingest(args, clock: Clock) -> int:
     except R.JobAlreadyDone as e:
         print(f"skip: {e}")
         return 0
-    budget = R.DbRequestBudget(factory, clock, {"polymarket": settings.polymarket.daily_request_budget})
-    raw = RawDump(settings.resolve(settings.raw_dump_dir), clock, "polymarket") if args.raw_dump else None
-    pm = PolymarketProvider(settings, clock, budget, on_raw=raw) if "polymarket" in which else None
-    yh = YahooProvider(settings, assets, clock) if "stocks" in which else None
-    ing = Ingestor(settings, assets, clock, factory, yahoo=yh, polymarket=pm)
+    # Once the job is claimed every exit path finalises it: provider construction, ingestion and
+    # cleanup all run inside the try, cleanup steps are isolated from each other, and a failure
+    # to finalise never hides the original exception.
     report = RunReport()
-    symbols = args.symbols.split(",") if args.symbols else None
-    error = None
+    budget = raw = pm = yh = None
+    error: str | None = None
+    cleanup_errors: list[str] = []
     try:
+        budget = R.DbRequestBudget(factory, clock, {"polymarket": settings.polymarket.daily_request_budget})
+        if args.raw_dump:
+            raw = RawDump(settings.resolve(settings.raw_dump_dir), clock, "polymarket")
+        pm = PolymarketProvider(settings, clock, budget, on_raw=raw) if "polymarket" in which else None
+        yh = YahooProvider(settings, assets, clock) if "stocks" in which else None
+        ing = Ingestor(settings, assets, clock, factory, yahoo=yh, polymarket=pm)
+        symbols = args.symbols.split(",") if args.symbols else None
         if yh:
             sub = ing.backfill_stocks(symbols) if args.action == "backfill" else ing.update_stocks(symbols)
             report.results += sub.results
         if pm:
             sub = ing.backfill_polymarket() if args.action == "backfill" else ing.update_polymarket()
             report.results += sub.results
-    except Exception as e:  # unexpected: record and re-raise after closing the job
+    except BaseException as e:  # record (Ctrl-C included), finalise below, then re-raise
         error = f"{type(e).__name__}: {e}"
         raise
     finally:
-        budget.flush()
-        if pm:
-            pm.close()
-        if raw:
-            raw.close()
+        for step, fn in (("budget.flush", budget and budget.flush), ("polymarket.close", pm and pm.close),
+                         ("raw_dump.close", raw and raw.close)):  # fmt: skip
+            if fn is None:
+                continue
+            try:
+                fn()
+            except Exception as ce:  # every cleanup step must get its turn
+                cleanup_errors.append(f"{step}: {type(ce).__name__}: {ce}")
+                log.exception("cleanup step %s failed for job_run %s", step, job_id)
         stats = report.as_dict()
         stats["requests"] = {"polymarket": pm.http.requests if pm else 0}
-        status = "failed" if error or report.failed else "succeeded"
-        err = error or ("; ".join(f"{r.unit}: {r.error}" for r in report.failed)[:2000] or None)
-        R.finish_job(factory, job_id, clock.now(), status, stats, err)
+        if cleanup_errors:
+            stats["cleanup_errors"] = cleanup_errors
+        status = "failed" if error or report.failed or cleanup_errors else "succeeded"
+        parts = [error] if error else ["; ".join(f"{r.unit}: {r.error}" for r in report.failed)]
+        parts += [f"cleanup {c}" for c in cleanup_errors]
+        err = "; ".join(p for p in parts if p)[:2000] or None
+        try:
+            R.finish_job(factory, job_id, clock.now(), status, stats, err)
+        except Exception:
+            log.exception("could not finalise job_run %s (status %s)", job_id, status)
+            if error is None:
+                raise  # nothing else is propagating: this is the error to report
+            # otherwise let the original ingestion exception propagate unmasked
     ok = sum(r.ok for r in report.results)
     print(f"{job_name}: {ok}/{len(report.results)} units ok, job_run {job_id}")
     for r in report.failed:
         print(f"  FAILED {r.unit}: {r.error}")
-    return 1 if report.failed else 0
+    for c in cleanup_errors:
+        print(f"  CLEANUP FAILED {c}")
+    return 1 if report.failed or cleanup_errors else 0
 
 
 def cmd_health(args, clock: Clock) -> int:

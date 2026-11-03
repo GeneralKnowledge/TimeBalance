@@ -1,6 +1,6 @@
 # Known limitations
 
-_As of M0 (2026-11-03)._
+_As of M1.1 (2026-11-03)._
 
 ## Hardware and dependencies
 
@@ -60,6 +60,9 @@ _As of M0 (2026-11-03)._
   yet: Stooq's CSV endpoint is behind a JavaScript challenge and Alpha Vantage's free tier (25
   requests/day, key required) is too small for backfills.
 - **Yahoo back-adjusts.** `close` is split-adjusted after the fact, so a split rewrites history.
+  A backfilled `close` is therefore already split-adjusted for splits that came after the
+  simulated cutoff. Returns are unaffected, and the split day shows no artificial jump. Price
+  levels before a split are not the prices quoted at the time.
   We keep each change as a new `version` row, but anything that read the old version saw
   different numbers (which is the point of versioning, and also why M2 must read through
   `get_history`). Prices are rounded to the 7 significant digits Yahoo's float32 values carry.
@@ -86,3 +89,29 @@ _As of M0 (2026-11-03)._
 - **The scheduler is systemd timers for now** (`deploy/`), not APScheduler. It runs one job per
   slot (enforced by `job_runs`), but there is no in-process retry within a slot; the next slot
   picks up where the last one stopped.
+
+## Historical replay and price field (M1.1, 2026-11-03)
+
+How the two replay modes work is described in `docs/DATA_SOURCES.md`, under "Reading history".
+
+- **Reconstructed history is not contemporaneous knowledge.** Almost all data before 2026-11-03
+  was backfilled, so strict replay of any earlier date is empty. Reconstructed replay uses each
+  row's availability rule instead. It is an assumption ("Yahoo's close was known 30 minutes after
+  the close"), not an observation of when we actually knew the value. Results based on it must be
+  labelled as reconstructed (`attrs["replay"]`).
+- **Revisions that were never captured are lost.** Reconstructed replay uses the earliest version
+  we hold. If the provider revised a value before our first download, we only have the revised
+  value, and there is no way to recover what the value was at the time. Versioning only records
+  revisions made after the first capture.
+- **Availability rules are per source.** They cover the four sources that M1 ingests. A new source
+  needs a rule before reconstructed replay will read it. Order-book snapshots can never be
+  reconstructed.
+- **Close, not adjusted close.** Initial stock forecasting uses `close`, so return targets are
+  price returns. They exclude dividends (roughly 1–1.5% a year on SPY), which is a small, known bias
+  against total-return comparisons. `adj_close` is kept but is not used as an input.
+- **Corporate actions are not modelled.** Splits are already applied retrospectively in `close`
+  (see above). Dividends are kept as `dividend:x` flags on the ex-date bar but are not yet used.
+  Total-return forecasting will need dividends applied from their ex-date, with an explicit rule
+  for when each dividend became known. That is not built yet.
+- **M0 SPY numbers predate this change.** The M0 demo and sanity figures in `docs/STATUS.md` were
+  computed from `adj_close`. The scripts now use `close`, so their output differs slightly.

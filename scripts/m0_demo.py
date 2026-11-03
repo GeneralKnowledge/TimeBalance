@@ -2,8 +2,9 @@
 
     uv run python scripts/m0_demo.py [--device cpu|cuda|auto] [--models timestral-5m persistence ...]
 
-SPY: target = daily log return of adj_close; h = 1, 5, 20 trading days. Implied price = last close
-times exp(cumulative median returns), i.e. the median-path price.
+SPY: target = daily log return of close (not adj_close; see docs/KNOWN_LIMITATIONS.md);
+h = 1, 5, 20 trading days. Implied price = last close times exp(cumulative median returns),
+i.e. the median-path price.
 Polymarket: target = logit(YES price), eps 1e-4; h = 1, 6, 24 hours; context ends 2024-11-05 00:00Z
 (before the result was known). Implied value = inverse-logit of the step-h quantiles.
 Shown per row: the step-h median, q0.1 and q0.9.
@@ -20,7 +21,7 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from mpe.features.transforms import inv_logit, log_returns, logit, reconstruct_prices
+from mpe.features.transforms import inv_logit, logit, price_series, reconstruct_prices, stock_log_returns
 from mpe.fixtures import make_input, pm_yes_hourly, spy_daily
 from mpe.models.base import validate_output
 from mpe.models.registry import REGISTRY, ModelManager
@@ -38,9 +39,9 @@ def main() -> int:
     args = ap.parse_args()
 
     spy = spy_daily()
-    r = log_returns(spy["adj_close"].to_numpy())
-    r_ts = spy["timestamp"].iloc[1:]
-    last_price = float(spy["adj_close"].iloc[-1])
+    rets = stock_log_returns(spy)  # STOCK_PRICE_FIELD = "close"
+    r, r_ts = rets.to_numpy(), spy["timestamp"].iloc[1:]
+    last_price = float(price_series(spy).iloc[-1])
 
     pm = pm_yes_hourly()
     pm = pm[pm["timestamp"] < pd.Timestamp("2024-11-05T00:00:00Z")]

@@ -26,4 +26,8 @@ uv run mpe data health                         # freshness, gaps, quality events
 deploy/install_user_timers.sh --enable         # systemd user timers for automatic updates
 ```
 
+Reading history: `get_history` is strict point-in-time replay (what the system actually knew);
+`mpe.storage.replay.get_reconstructed_history` is labelled backfill research. See
+"Reading history" in `docs/DATA_SOURCES.md`.
+
 Status: `docs/STATUS.md`. Data sources: `docs/DATA_SOURCES.md`. Model facts: `docs/MODELS.md`. Limitations: `docs/KNOWN_LIMITATIONS.md`.

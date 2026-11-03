@@ -17,7 +17,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from mpe.features.transforms import log_returns
+from mpe.features.transforms import stock_log_returns
 from mpe.fixtures import make_input, spy_daily
 from mpe.models.registry import REGISTRY, ModelManager
 
@@ -41,7 +41,7 @@ def main() -> int:
     )
     args = ap.parse_args()
     spy = spy_daily()
-    r = log_returns(spy["adj_close"].to_numpy())
+    r = stock_log_returns(spy).to_numpy()  # close, not adj_close
     ts = spy["timestamp"].iloc[1:].reset_index(drop=True)
     mgr = ModelManager(max_resident=1, device=args.device)
     print(
