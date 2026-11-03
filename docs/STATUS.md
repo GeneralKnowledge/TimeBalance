@@ -7,14 +7,32 @@ _Last updated 2026-11-03._
 | Milestone | State |
 |---|---|
 | M0 Foundation and Timestral integration | Done (PR #2, merged) |
-| M1 Data ingestion and persistence | Done, pending review (branch `milestone/m1-data`) |
-| M2–M5 | Not started |
+| M1 Data ingestion and persistence | Done (PR #3, merged) |
+| M1.1 Historical data integrity and ingestion reliability | Current: branch `milestone/m1.1-data-integrity`, PR open for review |
+| M2–M5 | Not started (M2 not implemented) |
 
 ## Environment (laptop `create`)
 
 Ubuntu, kernel 6.8; Intel i7-8750H (6 cores / 12 threads); 7.6 GB RAM + 4 GB swap; NVIDIA GTX 1060
 Max-Q 6 GB (compute capability 6.1), driver 550.163.01 (CUDA 12.4); Python 3.12.3; uv 0.13.7;
 torch 2.14.1+cu126; timestral at upstream commit `a534bdb`.
+
+## M1.1 (2026-11-03, in review)
+
+- Two separate history read paths. `get_history` is strict point-in-time replay, unchanged and
+  still the default. The new `replay.get_reconstructed_history` reads backfilled data under
+  documented per-source availability rules, labels each row `captured` or `reconstructed`, and
+  never lets a later correction reach an earlier cutoff. Details are in `DATA_SOURCES.md`, under
+  "Reading history".
+- Stock forecasting inputs use `close` explicitly (`STOCK_PRICE_FIELD`, `price_series`,
+  `stock_log_returns`). `adj_close` is still stored. The M0 demo and sanity scripts now use
+  `close`.
+- `mpe ingest` always finalises its `job_runs` row. Provider construction is inside the protected
+  block. Each cleanup step (budget flush, client close, raw dump close) runs even if an earlier
+  one fails. A cleanup failure marks the job `failed`, and a failure to finalise never hides the
+  original exception.
+- No schema change and no migration. Existing rows are untouched.
+- Tests: 132 offline tests pass (27 new), with 5 weights/GPU tests deselected by default.
 
 ## What works (M1, 2026-11-03)
 
@@ -40,7 +58,7 @@ torch 2.14.1+cu126; timestral at upstream commit `a534bdb`.
 - `uv run mpe data health [--json]`: rows, first/last bar, staleness per asset, quality events and
   recent jobs.
 - Point-in-time accessor `get_history(asset_id, as_of, interval)` (tested with planted future
-  bars and later corrections).
+  bars and later corrections). M1.1 added a separate reconstructed accessor (see above).
 
 ## M1 acceptance criteria
 
@@ -117,7 +135,9 @@ expected on Pascal, so we stay on fp32.
 ### Optional sanity check (report only, no conclusions)
 
 `uv run python scripts/m0_sanity.py`: rolling one-step forecasts of SPY daily log returns over
-the last 250 days of the fixture (2025-11-04 to 2026-11-02):
+the last 250 days of the fixture (2025-11-04 to 2026-11-02). These M0 figures were computed from
+`adj_close`. Since M1.1 the script uses `close`, and on that series `zero` gives MAE 0.00625 and
+directional accuracy 0.512 (rerun on 2026-11-03, baselines only):
 
 | model | MAE | directional accuracy | mean pinball loss |
 |---|---|---|---|
@@ -132,9 +152,10 @@ questions; M2 does the real evaluation.
 
 ## Outstanding issues / next steps
 
-- Review and merge M1.
-- M2: read history only through `get_history`; build hourly Polymarket series and daily return
-  series from it; trading-calendar-aware target timestamps.
+- Review and merge M1.1.
+- M2 (not started): read history through `get_history` (strict) or `get_reconstructed_history`
+  (backfill research, recorded as such in run metadata). Build daily `close` return series and
+  hourly Polymarket series from them, with trading-calendar-aware target timestamps.
 - Possible data follow-ups: category quotas for the Polymarket panel; Data API v2 3-hour history
   as a fallback; an Alpha Vantage cross-check if Yahoo degrades.
 - Batch API (many series per call) is available upstream but the adapter sends one series per

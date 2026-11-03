@@ -154,6 +154,46 @@ value) and `version`.
 | Polymarket hourly trade volume | Hour start | Hour end + 60 s (never later than `retrieved_at`) |
 | Polymarket book snapshot | `retrieved_at` | `retrieved_at` |
 
-The point-in-time accessor `mpe.storage.repositories.get_history(asset_id, as_of, interval)`
-returns only rows with `available_at <= as_of` and `retrieved_at <= as_of`, and for each
-timestamp the latest such version.
+## Reading history: strict vs reconstructed replay
+
+There are two read paths, and they answer different questions. Both return the original
+timestamps and never modify stored rows. The frame's `attrs["knowledge_mode"]` says which one
+produced it.
+
+| | Strict point-in-time | Reconstructed history |
+|---|---|---|
+| Function | `repositories.get_history` | `replay.get_reconstructed_history` |
+| `knowledge_mode` | `strict_point_in_time` | `reconstructed_history` |
+| A row counts if | `available_at <= as_of` and `retrieved_at <= as_of` | its availability rule allows it at `as_of`, whenever it was retrieved |
+| Version used | latest retrieved by `as_of` | latest retrieved by `as_of` if any, else the **earliest** we hold |
+| Answers | what the system actually knew | what it could have known had it been running |
+| Use for | auditing live forecasts and signals | walk-forward research on backfilled data |
+
+Strict replay is unchanged from M1 and stays the default. Bars backfilled in November 2026 are
+invisible to a strict query for January 2024, which is correct.
+
+Reconstructed replay adds `retrieved_at` and a `knowledge` column (`captured` if retrieved by
+`as_of`, otherwise `reconstructed`). It also puts `attrs["replay"]` on the frame: the mode,
+cutoff, rules, optional `extra_latency` and exclusion counts. An experiment should copy that dict
+into its run metadata. The availability rules (`replay.AVAILABILITY_RULES`) are per source:
+
+| Source, interval | Earliest possible time (validated) | Rule |
+|---|---|---|
+| `yfinance`, `1d` | `timestamp` (session close; 00:00 London for FX) | stored `available_at` (close + 30 min) |
+| `polymarket_clob_history`, `1h` | `source_ts` (the sample's own time, not the hour) | stored `available_at` (sample + 60 s) |
+| `polymarket_data_trades`, `1h` | hour end | stored `available_at` (hour end + 60 s) |
+| `polymarket_clob_book`, `snapshot` | — | never reconstructed: used only if retrieved by `as_of` |
+
+A row whose `available_at` is earlier than its earliest possible time, or a history row without
+`source_ts`, is excluded and counted in `excluded_invalid_availability`. A source with no rule
+raises `UnknownAvailabilityRule` rather than being trusted. `extra_latency` delays every row's
+availability, for a more pessimistic test. Limitations are listed in `KNOWN_LIMITATIONS.md`.
+
+## Stock price field
+
+Initial stock forecasting uses `close` (`features.transforms.STOCK_PRICE_FIELD`), through
+`price_series` and `stock_log_returns`. `adj_close` stays stored but is not a forecasting input,
+because Yahoo recomputes it whenever a later dividend is paid, so a 2024 value seen today already
+contains dividends that came after 2024. A missing `close` raises `MissingPriceError`; it never
+falls back to `adj_close`. The field can be chosen explicitly (`field="adj_close"`) for
+comparisons.
