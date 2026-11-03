@@ -20,6 +20,10 @@ dependencies = [
     "pydantic>=2.7",
 ]
 
+[project.optional-dependencies]
+# Decision-model experiment (mpe decide). Optional: the forecasting pipeline never imports it.
+laya = ["laya==0.4.22"]
+
 [project.scripts]
 mpe = "mpe.main:main"
 

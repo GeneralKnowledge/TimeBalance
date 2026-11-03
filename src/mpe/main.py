@@ -205,6 +205,9 @@ def build_parser() -> argparse.ArgumentParser:
     from mpe.research.cli import add_parser as add_research
 
     add_research(sub)
+    from mpe.decisions.cli import add_parser as add_decide
+
+    add_decide(sub)
     return p
 
 
