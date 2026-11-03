@@ -113,6 +113,9 @@ Bitcoin price thresholds. Category quotas are a possible later change.
   both, plus dividends and splits as flags on the bar (`quality_flags: ["dividend:0.48"]`).
   Because Yahoo back-adjusts history after every split, a past `close` can change; such changes
   arrive as new `version` rows.
+- Yahoo recomputes `Adj Close` on every request and its last digit wobbles (84.5923, then
+  84.59229). Changes under 1e-5 relative in `adj_close` are therefore not treated as corrections
+  (a real dividend re-adjustment is far larger). Every other field must match exactly.
 - Yahoo serves float32 prices (768.79 arrives as 768.7899780273438). We keep 7 significant digits,
   which is all float32 carries.
 - Timestamps: Yahoo labels daily bars with the local session date. We set `timestamp` to the
