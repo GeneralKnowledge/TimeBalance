@@ -1,0 +1,12 @@
+[Unit]
+Description=TimeBalance: daily stock / ETF / FX ingestion (yfinance)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/TimeBalance
+Environment=PATH=%h/.local/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=%h/.local/bin/uv run --frozen mpe --json-logs -v ingest update --only stocks --slot-minutes 1440
+TimeoutStartSec=30min
+Nice=10

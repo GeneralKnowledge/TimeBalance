@@ -43,3 +43,22 @@ def test_no_real_trading_clients():
         text = p.read_text().lower()
         for s in FORBIDDEN_STRINGS:
             assert s not in text, f"{p} references {s!r}"
+
+
+def test_clock_injection():
+    """Only mpe/clock.py reads the wall clock; everything else gets a Clock injected."""
+    allowed = ROOT / "src" / "mpe" / "clock.py"
+    banned = {("datetime", "now"), ("datetime", "utcnow"), ("datetime", "today"), ("date", "today"),
+              ("time", "time"), ("time", "time_ns")}  # fmt: skip
+    offenders = []
+    for p in (ROOT / "src").rglob("*.py"):
+        if p == allowed:
+            continue
+        for node in ast.walk(ast.parse(p.read_text(), filename=str(p))):
+            if (
+                isinstance(node, ast.Attribute)
+                and isinstance(node.value, ast.Name)
+                and (node.value.id, node.attr) in banned
+            ):
+                offenders.append(f"{p.relative_to(ROOT)}:{node.lineno} {node.value.id}.{node.attr}")
+    assert not offenders, offenders

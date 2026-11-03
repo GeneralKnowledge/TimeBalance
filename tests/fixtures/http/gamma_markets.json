@@ -1,0 +1,168 @@
+{
+ "open": [
+  {
+   "id": "562831",
+   "question": "2026 Balance of Power: R Senate, R House",
+   "conditionId": "0xc5eae79d1ffe716572353962eb926b1e3964c500a4880a7a94f58408218ee76b",
+   "slug": "2026-balance-of-power-r-senate-r-house-537",
+   "description": "This market will resolve according to the party that wins control of the United States Senate and the party that wins control of the United States House of Representatives in the 2026 United States midterm election.\n\nA party wins control of the United States Senate if it wins a majority of the chamb",
+   "outcomes": "[\"Yes\", \"No\"]",
+   "outcomePrices": "[\"0.055\", \"0.945\"]",
+   "clobTokenIds": "[\"103704141773947678931823410030956181918562062788486034785782641603149828893320\", \"25869296386911654049715489068824757745174681288397238521780118949553760488529\"]",
+   "negRisk": true,
+   "active": true,
+   "closed": false,
+   "startDate": "2025-07-11T21:05:25.044Z",
+   "endDate": "2026-11-04T04:59:00Z",
+   "umaResolutionStatuses": "[]",
+   "liquidityNum": 1984910.3561,
+   "volumeNum": 21678618.969264,
+   "feesEnabled": true,
+   "feeSchedule": {
+    "exponent": 1,
+    "rate": 0.04,
+    "takerOnly": true,
+    "rebateRate": 0.25
+   },
+   "feeType": "politics_fees",
+   "resolutionSource": "",
+   "events": [
+    {
+     "id": "32228",
+     "slug": "balance-of-power-2026-midterms"
+    }
+   ]
+  },
+  {
+   "id": "562802",
+   "question": "Will the Democratic Party control the House after the 2026 Midterm elections?",
+   "conditionId": "0xd5d9fc47718bd553592d126b1fa5e87183d27f3936975b0c04cc0f2dec1f1bb4",
+   "slug": "will-the-democratic-party-control-the-house-after-the-2026-midterm-elections",
+   "description": "This market will resolve according to the party that wins control of the United States House of Representatives in the 2026 United States midterm election.\n\nA party wins control of the United States House of Representatives if it wins a majority of the chamber\u2019s voting seats. If no party wins a majo",
+   "outcomes": "[\"Yes\", \"No\"]",
+   "outcomePrices": "[\"0.945\", \"0.055\"]",
+   "clobTokenIds": "[\"83247781037352156539108067944461291821683755894607244160607042790356561625563\", \"33156410999665902694791064431724433042010245771106314074312009703157423879038\"]",
+   "negRisk": true,
+   "active": true,
+   "closed": false,
+   "startDate": "2025-07-11T19:50:44.885Z",
+   "endDate": "2026-11-04T04:59:00Z",
+   "umaResolutionStatuses": "[]",
+   "liquidityNum": 6153904.9458,
+   "volumeNum": 25147044.175493,
+   "feesEnabled": true,
+   "feeSchedule": {
+    "exponent": 1,
+    "rate": 0.04,
+    "takerOnly": true,
+    "rebateRate": 0.25
+   },
+   "feeType": "politics_fees",
+   "resolutionSource": "",
+   "events": [
+    {
+     "id": "32225",
+     "slug": "which-party-will-win-the-house-in-2026"
+    }
+   ]
+  }
+ ],
+ "closed": [
+  {
+   "id": "2169995",
+   "question": "MicroStrategy sells any Bitcoin by May 31, 2026?",
+   "conditionId": "0x3733a1b647e7364095736ab0966465d896a84cf3b6bc1695ca1f26c3239b3868",
+   "slug": "microstrategy-sells-any-bitcoin-by-may-31-2026",
+   "description": "This market will resolve to \"Yes\" if MicroStrategy sells any of its Bitcoin by 11:59 PM ET on the date specified in the title. Otherwise, this market will resolve to \"No\".\n\nThe primary resolution source for this market will be information from MSTR and on-chain data, however a consensus of credible ",
+   "outcomes": "[\"Yes\", \"No\"]",
+   "outcomePrices": "[\"0\", \"1\"]",
+   "clobTokenIds": "[\"25714007960293389110960044475283546872601238755063051359394740854408462452120\", \"3192689304828767159232889612891719105504357313659012189260030438494464480574\"]",
+   "negRisk": false,
+   "active": true,
+   "closed": true,
+   "closedTime": "2026-06-04 00:34:19+00",
+   "startDate": "2026-05-05T23:48:20.102Z",
+   "endDate": "2026-07-01T04:00:00Z",
+   "umaResolutionStatus": "resolved",
+   "umaResolutionStatuses": "[\"proposed\", \"disputed\", \"proposed\", \"disputed\"]",
+   "volumeNum": 375813104.55575246,
+   "feesEnabled": true,
+   "feeSchedule": {
+    "exponent": 1,
+    "rate": 0.04,
+    "takerOnly": true,
+    "rebateRate": 0.25
+   },
+   "feeType": "finance_prices_fees",
+   "resolutionSource": "",
+   "events": [
+    {
+     "id": "16167",
+     "slug": "microstrategy-sell-any-bitcoin-in-2025"
+    }
+   ]
+  },
+  {
+   "id": "2270330",
+   "question": "US x Iran permanent peace deal by June 15, 2026?",
+   "conditionId": "0xd86a816093fcd0a0e1ca440bc5ce199bd3c5a8d6139e044b076958164f8c5423",
+   "slug": "us-x-iran-permanent-peace-deal-by-june-15-2026-734-856-129",
+   "description": "This market will resolve to \u201cYes\u201d if Iran and the United states agree to a permanent peace deal by the specified date, 11:59 PM ET. Otherwise, this market will resolve to \u201cNo\u201d. \n\nA permanent peace deal refers to any agreement which explicitly indicates that military hostilities between the United St",
+   "outcomes": "[\"Yes\", \"No\"]",
+   "outcomePrices": "[\"1\", \"0\"]",
+   "clobTokenIds": "[\"5904694069529905826680225678119990013628860098514322777023141327768111791078\", \"59855952379545476461266875939089074481171378466995213858930892770855011813551\"]",
+   "negRisk": false,
+   "active": true,
+   "closed": true,
+   "closedTime": "2026-06-18 00:32:19+00",
+   "startDate": "2026-05-15T20:13:39.789Z",
+   "endDate": "2026-06-15T00:00:00Z",
+   "umaResolutionStatus": "resolved",
+   "umaResolutionStatuses": "[\"proposed\", \"disputed\", \"proposed\", \"disputed\"]",
+   "volumeNum": 177370818.43892464,
+   "feesEnabled": false,
+   "feeType": null,
+   "resolutionSource": "",
+   "events": [
+    {
+     "id": "357807",
+     "slug": "us-x-iran-permanent-peace-deal-by"
+    }
+   ]
+  },
+  {
+   "id": "558938",
+   "question": "Will Argentina win the 2026 FIFA World Cup?",
+   "conditionId": "0x0c4cd2055d6ea89354ffddc55d6dbcef9355748112ea952fc925f3db6a5c457f",
+   "slug": "will-argentina-win-the-2026-fifa-world-cup-245",
+   "description": "This market will resolve according to the national team that wins the 2026 FIFA World Cup.\n\nIf at any point it becomes impossible for this team to win the FIFA World Cup based on the rules of FIFA (e.g., they are eliminated in the knockout stage), this market will resolve immediately to \u201cNo\u201d.\n\nIf th",
+   "outcomes": "[\"Yes\", \"No\"]",
+   "outcomePrices": "[\"0\", \"1\"]",
+   "clobTokenIds": "[\"18812649149814341758733697580460697418474693998558159483117100240528657629879\", \"115428153746996892211798999366308897078723117634059783423375188043903703749062\"]",
+   "negRisk": true,
+   "active": true,
+   "closed": true,
+   "closedTime": "2026-07-20 01:24:43+00",
+   "startDate": "2025-07-02T22:26:52.071Z",
+   "endDate": "2026-07-20T00:00:00Z",
+   "umaResolutionStatus": "resolved",
+   "umaResolutionStatuses": "[\"proposed\", \"resolved\"]",
+   "volumeNum": 174315688.25573426,
+   "feesEnabled": true,
+   "feeSchedule": {
+    "exponent": 1,
+    "rate": 0.03,
+    "takerOnly": true,
+    "rebateRate": 0.25
+   },
+   "feeType": "sports_fees_v2",
+   "resolutionSource": "",
+   "events": [
+    {
+     "id": "30615",
+     "slug": "world-cup-winner"
+    }
+   ]
+  }
+ ]
+}

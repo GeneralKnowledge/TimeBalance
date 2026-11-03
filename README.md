@@ -5,7 +5,7 @@ Mistral's Timestral time-series models against simple baselines on stocks and Po
 
 Paper trading only. See `docs/IMPLEMENTATION_PROMPT.md` for the implementation brief.
 
-## Quick start (M0)
+## Models (M0)
 
 ```bash
 uv sync                                        # Python 3.12, torch 2.14.1+cu126 (GTX 1060 capable)
@@ -16,4 +16,14 @@ uv run python scripts/m0_demo.py               # sample forecasts, every model
 uv run python scripts/m0_benchmark.py          # CPU vs GPU benchmark -> benchmarks/
 ```
 
-Status: `docs/STATUS.md`. Model facts: `docs/MODELS.md`. Limitations: `docs/KNOWN_LIMITATIONS.md`.
+## Data (M1)
+
+```bash
+uv run mpe db init                             # create / migrate data/mpe.sqlite3
+uv run mpe -v ingest backfill                  # watchlist from 2010 + Polymarket panel (~10 min)
+uv run mpe -v ingest update                    # incremental; safe to re-run
+uv run mpe data health                         # freshness, gaps, quality events, recent jobs
+deploy/install_user_timers.sh --enable         # systemd user timers for automatic updates
+```
+
+Status: `docs/STATUS.md`. Data sources: `docs/DATA_SOURCES.md`. Model facts: `docs/MODELS.md`. Limitations: `docs/KNOWN_LIMITATIONS.md`.

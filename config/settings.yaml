@@ -1,0 +1,48 @@
+# Market Prediction Engine settings. Paths are relative to the repository root.
+database_path: data/mpe.sqlite3
+raw_dump_dir: data/raw            # raw provider payloads (gitignored)
+
+paper_trading:
+  enabled: true
+  real_trading_enabled: false     # must stay false; startup aborts otherwise
+
+http:
+  timeout_s: 30
+  max_retries: 5
+  backoff_base_s: 1.0
+  backoff_max_s: 60
+  user_agent: "TimeBalance-research/0.1 (personal paper-trading research)"
+
+# available_at rules (brief §7.2)
+availability:
+  stock_close_delay_minutes: 30   # daily bar known at exchange close + this
+  fx_close_delay_minutes: 30      # daily FX bar known at 00:00 UTC next day + this
+  polymarket_history_latency_seconds: 60   # backfilled PM points known at their own time + this
+
+polymarket:
+  gamma_url: https://gamma-api.polymarket.com
+  clob_url: https://clob.polymarket.com
+  data_url: https://data-api.polymarket.com
+  history_interval: 1h            # CLOB prices-history fidelity=60
+  history_window_days: 14         # CLOB rejects longer startTs/endTs windows
+  daily_request_budget: 20000     # our own cap, far below the published Cloudflare limits
+  min_request_interval_s: 0.05
+  selection:
+    target_open: 35
+    target_resolved: 12
+    min_liquidity_open: 20000     # USD, Gamma liquidityNum, open markets
+    min_volume_open: 100000       # USD lifetime volume, open markets
+    min_volume_resolved: 250000   # USD lifetime volume, resolved markets (no live liquidity)
+    min_history_days: 14
+    resolved_lookback_days: 365
+    max_candidates_per_scan: 600
+    exclude_neg_risk: true        # multi-outcome events (each leg is a negRisk binary)
+  trades:
+    max_pages_per_market: 5       # Data API v2 /trades pages per market per run (1000 rows each)
+
+stocks:
+  provider: yfinance
+  calendar: XNYS
+  backfill_start: "2010-01-01"
+  outlier_z: 8.0                  # robust z-score on daily log returns
+  stale_after_sessions: 2

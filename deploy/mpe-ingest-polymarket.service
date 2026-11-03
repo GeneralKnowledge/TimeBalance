@@ -1,0 +1,12 @@
+[Unit]
+Description=TimeBalance: Polymarket ingestion (read-only, paper research)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/TimeBalance
+Environment=PATH=%h/.local/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=%h/.local/bin/uv run --frozen mpe --json-logs -v ingest update --only polymarket --slot-minutes 30
+TimeoutStartSec=45min
+Nice=10
