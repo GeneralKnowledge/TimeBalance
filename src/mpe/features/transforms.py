@@ -3,8 +3,45 @@
 from __future__ import annotations
 
 import numpy as np
+import pandas as pd
 
 DEFAULT_EPS = 1e-4
+
+# Initial stock forecasting uses the ordinary (split-adjusted) close. ``adj_close`` folds in
+# dividends retrospectively, which a simulated forecast could not have known; it stays stored but
+# is not a forecasting input until a dividend policy exists (docs/KNOWN_LIMITATIONS.md).
+STOCK_PRICE_FIELD = "close"
+PRICE_FIELDS = ("close", "adj_close")
+
+
+class MissingPriceError(ValueError):
+    """A bar has no value in the selected price field; there is deliberately no fallback."""
+
+
+def price_series(history: pd.DataFrame, field: str = STOCK_PRICE_FIELD) -> pd.Series:
+    """The selected price field of a history frame as float64, indexed by timestamp.
+
+    ``field`` is explicit and never substituted: a missing ``close`` raises rather than borrowing
+    ``adj_close`` (or vice versa).
+    """
+    if field not in PRICE_FIELDS:
+        raise ValueError(f"unknown price field {field!r}; expected one of {PRICE_FIELDS}")
+    if field not in history.columns:
+        raise MissingPriceError(f"history has no {field!r} column")
+    col = history[field]
+    missing = col.isna()
+    if missing.any():
+        first = history.loc[missing, "timestamp"].iloc[0] if "timestamp" in history else None
+        raise MissingPriceError(f"{int(missing.sum())} bars have no {field!r} (first: {first})")
+    idx = pd.DatetimeIndex(history["timestamp"]) if "timestamp" in history else history.index
+    out = pd.Series(col.astype("float64").to_numpy(), index=idx, name=field)
+    return out
+
+
+def stock_log_returns(history: pd.DataFrame, field: str = STOCK_PRICE_FIELD) -> pd.Series:
+    """Daily log returns of ``field`` (default ``close``), labelled by the later bar's timestamp."""
+    p = price_series(history, field)
+    return pd.Series(log_returns(p.to_numpy()), index=p.index[1:], name=f"log_return_{field}")
 
 
 def log_returns(prices: np.ndarray) -> np.ndarray:
