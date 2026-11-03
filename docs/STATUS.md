@@ -6,8 +6,8 @@ _Last updated 2026-11-03._
 
 | Milestone | State |
 |---|---|
-| M0 Foundation and Timestral integration | Done, pending review (PR #2, branch `milestone/m0-timestral`) |
-| M1 Data ingestion and persistence | Done, pending review (branch `milestone/m1-data`, stacked on M0) |
+| M0 Foundation and Timestral integration | Done (PR #2, merged) |
+| M1 Data ingestion and persistence | Done, pending review (branch `milestone/m1-data`) |
 | M2–M5 | Not started |
 
 ## Environment (laptop `create`)
@@ -132,7 +132,7 @@ questions; M2 does the real evaluation.
 
 ## Outstanding issues / next steps
 
-- Review and merge M0 (PR #2), then M1.
+- Review and merge M1.
 - M2: read history only through `get_history`; build hourly Polymarket series and daily return
   series from it; trading-calendar-aware target timestamps.
 - Possible data follow-ups: category quotas for the Polymarket panel; Data API v2 3-hour history
