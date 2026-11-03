@@ -266,7 +266,7 @@ def default_config(
     origin_start: datetime,
     origin_end: datetime,
     targets_as_of: datetime | None = None,
-    models: list[str] | None = None,
+    models: list[str | ModelSpec] | None = None,
     **overrides: Any,
 ) -> ExperimentConfig:
     """A complete configuration with the M2 defaults written out explicitly."""
@@ -293,10 +293,8 @@ def default_config(
         origin_end=origin_end, extra_latency_seconds=0,
         targets_as_of=targets_as_of or (origin_end + timedelta(days=45 if domain == "stocks" else 3)),
         quantile_levels=list(DEFAULT_QUANTILE_LEVELS), interval_levels=[0.5, 0.8, 0.9, 0.98],
-        models=[model_spec(m) for m in models], seed=0, device="auto",
+        models=[m if isinstance(m, ModelSpec) else model_spec(m) for m in models], seed=0, device="auto",
         bootstrap_samples=2000, min_paired_dates=30,
     )  # fmt: skip
     base.update(overrides)
-    if "models" in overrides and overrides["models"] and isinstance(overrides["models"][0], str):
-        base["models"] = [model_spec(m) for m in overrides["models"]]
     return ExperimentConfig.model_validate(base)

@@ -155,7 +155,8 @@ def _mode_label(mode: str) -> str:
     return "STRICT POINT-IN-TIME: only data the system had actually retrieved by each cutoff."
 
 
-def write_report(store: ResearchStore, eid: str, root: Path = REPORTS) -> Path:
+def write_report(store: ResearchStore, eid: str, root: Path | None = None) -> Path:
+    root = root or REPORTS
     res = full_analysis(store, eid)
     payload = _summary_payload(store, eid, res)
     blob = json.dumps(payload, sort_keys=True, default=str)

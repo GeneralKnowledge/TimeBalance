@@ -256,7 +256,9 @@ class ExperimentRunner:
             for i, p in enumerate(pending):
                 rec = {"experiment_id": eid, "model_name": spec.name, "asset": p.asset,
                        "origin_ts": to_iso(p.origin_ts.to_pydatetime()), "model_run_id": run_id,
-                       "input_hash": p.input_hash, "created_at": to_iso(self.clock.now())}  # fmt: skip
+                       "input_hash": p.input_hash, "created_at": to_iso(self.clock.now()),
+                       "status": "failed", "error": None, "median": None, "quantiles": None, "device": None,
+                       "inference_ms": None, "input_window_json": None}  # every row binds every column  # fmt: skip
                 try:
                     inp = ForecastInput(values=p.values, timestamps=p.timestamps, series_names=(p.asset,),
                                         horizon=cfg.max_horizon, input_cutoff=p.cutoff,
