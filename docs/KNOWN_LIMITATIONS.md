@@ -138,9 +138,11 @@ How experiments work is in `docs/M2_RESEARCH_METHODOLOGY.md`.
 - **Dependence.** Overlapping multi-step targets and cross-correlated assets make the effective
   sample far smaller than the case count. The moving-block bootstrap over origin dates is an
   approximation; intervals are probably still somewhat narrow for 20-session targets.
-- **No multiple-testing correction and no held-out final test period.** The number of comparisons
-  is reported instead. Nothing is tuned in M2, but later model selection must be confirmed on new
-  data.
+- **Limited multiple-testing control and no held-out final test period.** Diebold-Mariano p-values
+  are Holm-adjusted within one experiment's comparison table only. Nothing is tuned in M2, but later
+  model selection must be confirmed on new data.
+- **DM p-values use the normal distribution** (scipy is not a dependency). With at least 30 dates
+  per reported comparison the difference from the t(n−1) reference is negligible for decisions.
 - **Polymarket sample.** 47 high-volume binary markets from 2025–2026 (12 resolved), selected by
   volume, multi-outcome events excluded. Results do not generalise to prediction markets at large.
   The resolution analysis has 12 markets and supports no calibration claim. Prices pinned at 0 or

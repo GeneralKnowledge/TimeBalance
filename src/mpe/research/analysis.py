@@ -137,6 +137,7 @@ def _score(df: pd.DataFrame, Q: np.ndarray, cfg: ExperimentConfig, levels: np.nd
         lo, hi = M.central_interval(cfg.quantile_levels, c)
         df[f"cov_{c:g}"] = M.covered(y, Q[:, lo], Q[:, hi]).astype(float)
         df[f"width_{c:g}"] = Q[:, hi] - Q[:, lo]
+        df[f"is_{c:g}"] = M.interval_score(y, Q[:, lo], Q[:, hi], c)
     if cfg.target == "log_return":
         df["pred_change"], df["actual_change"] = yhat, y
     else:
@@ -166,9 +167,11 @@ def summarise(g: pd.DataFrame, below: np.ndarray | None, cfg: ExperimentConfig) 
     for c in cfg.interval_levels:
         out[f"cov_{c:g}"] = float(g[f"cov_{c:g}"].mean()) if len(g) else math.nan
         out[f"width_{c:g}"] = float(g[f"width_{c:g}"].mean()) if len(g) else math.nan
+        out[f"is_{c:g}"] = float(g[f"is_{c:g}"].mean()) if len(g) else math.nan
     if below is not None and len(below):
         freq = below.mean(axis=0)
         out["qce"] = float(np.abs(freq - np.asarray(cfg.quantile_levels)).mean())
+        out["pit_tv"] = M.pit_histogram(below, np.asarray(cfg.quantile_levels))["tv_distance"]
     if "abs_err_p" in g:
         out["mae_p"] = float(g["abs_err_p"].mean()) if len(g) else math.nan
         out["rmse_p"] = float(np.sqrt(g["sq_err_p"].mean())) if len(g) else math.nan
@@ -205,6 +208,14 @@ def leaderboard(sc: Scored) -> pd.DataFrame:
     for metric in ("mae", "rmse", "crps", "pinball", "macro_mae", "macro_crps"):
         base = lb["horizon"].map(ref[metric])
         lb[f"rel_{metric}"] = 1.0 - lb[metric] / base  # > 0 = better than the reference
+    # scale-free: skill against the reference within each asset, then the unweighted mean over
+    # assets, so high-volatility assets do not dominate the way they do in pooled losses
+    per = sc.rows.groupby(["horizon", "model", "asset"])[["abs_err", "crps"]].mean()
+    refa = per.xs(cfg.reference_baseline, level="model")
+    for col, name in (("abs_err", "asset_skill_mae"), ("crps", "asset_skill_crps")):
+        sk = 1.0 - per[col] / refa[col].reindex(per.index.droplevel("model")).to_numpy()
+        avg = sk.groupby(level=["horizon", "model"]).mean()
+        lb[name] = [avg.get((h, m), math.nan) for h, m in zip(lb["horizon"], lb["model"], strict=True)]
     lb["model_order"] = lb["model"].map({m: i for i, m in enumerate(cfg.model_names)})
     return lb.sort_values(["horizon", "model_order"]).drop(columns="model_order").reset_index(drop=True)
 
@@ -223,7 +234,8 @@ def paired(sc: Scored, model: str, ref: str, h: int, loss: str, df: pd.DataFrame
     a = d[d["model"] == model].set_index(["asset", "origin_ts"])[col]
     b = d[d["model"] == ref].set_index(["asset", "origin_ts"])[col]
     a, b = a.align(b, join="inner")
-    out = {"model": model, "reference": ref, "horizon": h, "loss": loss, "n_pairs": len(a)}
+    out = {"model": model, "reference": ref, "horizon": h, "loss": loss, "n_pairs": len(a),
+           "ci_low": math.nan, "ci_high": math.nan, "dm_stat": math.nan, "dm_p": math.nan}  # fmt: skip
     if not len(a):
         return {**out, "conclusion": "insufficient data", "mean_diff": math.nan}
     diff = (a - b).rename("d").reset_index()
@@ -241,7 +253,8 @@ def paired(sc: Scored, model: str, ref: str, h: int, loss: str, df: pd.DataFrame
     lo, hi = _ratio_bootstrap(by_date["sum"].to_numpy(), by_date["count"].to_numpy(), L, cfg.bootstrap_samples,
                               cfg.seed)  # fmt: skip
     concl = "better" if hi < 0 else "worse" if lo > 0 else "no demonstrated difference"
-    out.update(ci_low=lo, ci_high=hi, conclusion=concl)
+    dm = M.diebold_mariano((by_date["sum"] / by_date["count"]).to_numpy(), math.ceil(h / cfg.origin_stride))
+    out.update(ci_low=lo, ci_high=hi, conclusion=concl, dm_stat=dm["statistic"], dm_p=dm["pvalue"])
     return out
 
 
@@ -273,7 +286,10 @@ def comparisons(sc: Scored, lb: pd.DataFrame) -> pd.DataFrame:
                 rows.append({**paired(sc, m, cfg.reference_baseline, h, loss), "against": "reference"})
                 if best and best[0] != cfg.reference_baseline:
                     rows.append({**paired(sc, m, best[0], h, loss), "against": "best baseline"})
-    return pd.DataFrame(rows)
+    out = pd.DataFrame(rows)
+    if not out.empty:
+        out["dm_p_holm"] = M.holm(out["dm_p"].astype(float).tolist())  # family = this whole table
+    return out
 
 
 def per_asset(sc: Scored) -> pd.DataFrame:
@@ -303,6 +319,12 @@ def calibration(sc: Scored) -> pd.DataFrame:
         for lv, f in zip(cfg.quantile_levels, freq, strict=True):
             rows.append({"horizon": h, "model": m, "kind": "quantile", "nominal": lv, "empirical": float(f),
                          "width": math.nan, "n": len(g)})  # fmt: skip
+        pit = M.pit_histogram(b, np.asarray(cfg.quantile_levels))
+        for lo, hi, ob, ex in zip(
+            pit["edges"][:-1], pit["edges"][1:], pit["observed"], pit["expected"], strict=True
+        ):
+            rows.append({"horizon": h, "model": m, "kind": "pit_bin", "nominal": (lo + hi) / 2, "empirical": ob,
+                         "expected": ex, "bin_lo": lo, "bin_hi": hi, "width": math.nan, "n": len(g)})  # fmt: skip
     return pd.DataFrame(rows)
 
 

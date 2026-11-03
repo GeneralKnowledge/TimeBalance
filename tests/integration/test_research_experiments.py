@@ -561,3 +561,20 @@ def test_report_is_written_once_and_labelled(tmp_path, market, store):
     before = (out / "report.md").stat().st_mtime_ns
     assert write_report(store, eid, root=tmp_path / "reports") == out
     assert (out / "report.md").stat().st_mtime_ns == before  # not rewritten
+
+
+def test_asset_skill_is_scale_free(market, store):
+    cfg = stock_cfg(models=fast_models(["zero", "persistence"]), reference_baseline="zero")
+    eid, *_ = run(market, store, cfg)
+    sc = A.load_scored(store, eid)
+    lb = A.leaderboard(sc)
+    r = lb[(lb["model"] == "persistence") & (lb["horizon"] == 1)].iloc[0]
+    g = sc.rows[sc.rows["horizon"] == 1].groupby(["asset", "model"])["abs_err"].mean().unstack()
+    assert r["asset_skill_mae"] == pytest.approx((1 - g["persistence"] / g["zero"]).mean())
+    # multiplying one asset's errors by 100 leaves its skill, and the average skill, unchanged
+    sc.rows.loc[sc.rows["asset"] == "QQQ", ["abs_err", "crps"]] *= 100
+    lb2 = A.leaderboard(sc)
+    r2 = lb2[(lb2["model"] == "persistence") & (lb2["horizon"] == 1)].iloc[0]
+    assert r2["asset_skill_mae"] == pytest.approx(r["asset_skill_mae"])
+    cmp_ = A.comparisons(A.load_scored(store, eid), lb)
+    assert cmp_.empty or "dm_p_holm" in cmp_

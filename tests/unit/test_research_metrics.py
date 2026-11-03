@@ -106,3 +106,40 @@ def test_block_bootstrap_constant_series_and_reproducibility():
     a = M.moving_block_bootstrap_mean(d, 10, 500, seed=7)
     b = M.moving_block_bootstrap_mean(d, 10, 500, seed=7)
     assert a == b and a[0] < d.mean() < a[1]
+
+
+def test_interval_score_hand_calculated():
+    # 90% interval [0, 2]; a = 0.1 so a miss costs 2/0.1 = 20 per unit outside
+    s = M.interval_score(np.array([1.0, -0.5, 3.0]), np.zeros(3), np.full(3, 2.0), 0.9)
+    assert s.tolist() == pytest.approx([2.0, 2.0 + 20 * 0.5, 2.0 + 20 * 1.0])
+
+
+def test_pit_histogram():
+    levels = np.array([0.25, 0.5, 0.75])
+    # outcomes: one below every quantile, one between 0.5 and 0.75, two above all
+    below = np.array([[True, True, True], [False, False, True], [False, False, False], [False, False, False]])
+    h = M.pit_histogram(below, levels)
+    assert h["observed"] == pytest.approx([0.25, 0.0, 0.25, 0.5])
+    assert h["expected"] == pytest.approx([0.25, 0.25, 0.25, 0.25])
+    assert h["tv_distance"] == pytest.approx(0.25)
+
+
+def test_diebold_mariano_hand_calculated():
+    d = np.array([1.0, 2.0, 3.0, 4.0, 5.0])
+    r = M.diebold_mariano(d, h=1)
+    # mean 3, gamma_0 = 2, stat = 3 / sqrt(2 / 5); HLN factor sqrt((5 + 1 - 2) / 5)
+    expected = 3 / math.sqrt(2 / 5) * math.sqrt(4 / 5)
+    assert r["statistic"] == pytest.approx(expected)
+    assert r["pvalue"] == pytest.approx(math.erfc(expected / math.sqrt(2)))
+    # one lag: e = d - 3; gamma_1 = sum e_t e_{t-1} / n = (2 + 0 + 0 + 2) / 5 = 0.8
+    assert M.newey_west_variance(d, 1) == pytest.approx(2.8)  # 2 + 2 * (1 - 1/2) * 0.8
+    assert math.isnan(M.diebold_mariano(d[:3], 1)["pvalue"])  # too short
+    flat = M.diebold_mariano(np.zeros(10), 1)
+    assert flat["statistic"] == 0 and flat["pvalue"] == 1
+
+
+def test_holm_adjustment():
+    adj = M.holm([0.01, 0.04, float("nan"), 0.03])
+    # sorted 0.01, 0.03, 0.04 with m = 3: 0.03, 0.06, max(0.06, 0.04) = 0.06
+    assert adj[0] == pytest.approx(0.03) and adj[3] == pytest.approx(0.06) and adj[1] == pytest.approx(0.06)
+    assert math.isnan(adj[2])

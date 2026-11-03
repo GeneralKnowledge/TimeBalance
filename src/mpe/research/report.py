@@ -201,6 +201,18 @@ def _figures(res: dict, cfg, out: Path) -> list[str]:
             (out / f).write_text(svg_lines(f"Quantile calibration, h = {h} {unit}: share of outcomes <= quantile",
                                            x, series, "empirical frequency", diagonal=True, categorical=False))  # fmt: skip
             names.append(f)
+        pb = cal[(cal["horizon"] == h) & (cal["kind"] == "pit_bin")] if not cal.empty else cal
+        if not pb.empty:
+            x = sorted(pb["nominal"].unique())
+            series = {}
+            for m in cfg.model_names:
+                pm = pb[pb["model"] == m].set_index("nominal")
+                if len(pm):
+                    series[m] = [float(pm.loc[v, "empirical"] / pm.loc[v, "expected"]) for v in x]
+            f = f"pit_h{h}.svg"
+            (out / f).write_text(svg_lines(f"PIT histogram, h = {h} {unit}: observed / expected share per quantile bin "
+                                           "(1 = calibrated)", [f"{v:.3f}" for v in x], series, "observed / expected"))  # fmt: skip
+            names.append(f)
         o = ot[ot["horizon"] == h] if not ot.empty else ot
         if not o.empty:
             periods = sorted(o["period"].unique())
@@ -280,23 +292,33 @@ def render_markdown(store: ResearchStore, eid: str, res: dict, figs: list[str]) 
 
     s.append(f"\n## Leaderboard\n\nPooled over all scored cases (every case equal weight); `macro MAE` is the mean "
              f"of per-asset MAEs. Relative columns are `1 - metric / metric({ref})`: positive is better than "
-             f"`{ref}`. CRPS_q is the quantile CRPS over levels [{min(cfg.quantile_levels)}, {max(cfg.quantile_levels)}] "
+             f"`{ref}`. `asset skill` is the same ratio computed within each asset and then averaged over assets, "
+             "so high-volatility assets do not dominate it. CRPS_q is the quantile CRPS over levels [{min(cfg.quantile_levels)}, {max(cfg.quantile_levels)}] "
              "(no tail extrapolation). Directional accuracy excludes zero changes.\n")  # fmt: skip
     cols = [("model", "model"), ("n", "n"), ("n_assets", "assets"), ("mae", "MAE"), ("rmse", "RMSE"),
             ("mean_error", "mean err"), ("pinball", "pinball"), ("crps", "CRPS_q"), ("cov_0.9", "cov 90%"),
             ("width_0.9", "width 90%"), ("dir_acc", "dir acc"), ("rel_mae", "ΔMAE"), ("rel_crps", "ΔCRPS"),
-            ("macro_mae", "macro MAE")]  # fmt: skip
+            ("macro_mae", "macro MAE"), ("asset_skill_mae", "asset skill MAE"),
+            ("asset_skill_crps", "asset skill CRPS")]  # fmt: skip
     if cfg.domain == "polymarket":
         cols[3:3] = [("mae_p", "MAE (prob)"), ("rmse_p", "RMSE (prob)")]
     for h in cfg.horizons:
         s.append(f"\n### h = {h} {unit}\n\n")
-        s.append(md_table(lb[lb["horizon"] == h], cols, pct=("rel_mae", "rel_crps")))
+        s.append(
+            md_table(
+                lb[lb["horizon"] == h],
+                cols,
+                pct=("rel_mae", "rel_crps", "asset_skill_mae", "asset_skill_crps"),
+            )
+        )
     if not cmp_.empty:
         s.append(f"\n## Paired comparisons\n\nMean loss difference (model − comparator) over identical cases; "
                  "negative is better. 95% CI from a moving-block bootstrap over origin dates "
                  f"({cfg.bootstrap_samples} resamples, block ≥ horizon/stride). `insufficient data` when there are "
                  f"fewer than {cfg.min_paired_dates} origin dates or fewer than 10 blocks. "
-                 f"{len(cmp_)} comparisons are shown, so about {len(cmp_) * 0.05:.0f} could exclude zero by chance alone.\n\n")  # fmt: skip
+                 f"{len(cmp_)} comparisons are shown, so about {len(cmp_) * 0.05:.0f} could exclude zero by chance alone. "
+                 "`DM p` is the Diebold-Mariano test (Newey-West variance, Harvey-Leybourne-Newbold correction) on the "
+                 "per-date mean differential; `Holm p` adjusts it for every comparison in this table.\n\n")  # fmt: skip
         c2 = cmp_.copy()
         c2["ci"] = [
             f"[{_fmt(a)}, {_fmt(b)}]" for a, b in zip(c2.get("ci_low"), c2.get("ci_high"), strict=True)
@@ -304,7 +326,8 @@ def render_markdown(store: ResearchStore, eid: str, res: dict, figs: list[str]) 
         s.append(md_table(c2, [("horizon", "h"), ("loss", "loss"), ("model", "model"), ("reference", "vs"),
                                ("against", "comparator"), ("mean_diff", "mean diff"), ("ci", "95% CI"),
                                ("rel_improvement", "rel. improvement"), ("n_pairs", "pairs"), ("n_assets", "assets"),
-                               ("n_dates", "dates"), ("conclusion", "conclusion")], pct=("rel_improvement",)))  # fmt: skip
+                               ("n_dates", "dates"), ("dm_p", "DM p"), ("dm_p_holm", "Holm p"),
+                               ("conclusion", "conclusion")], pct=("rel_improvement",)))  # fmt: skip
     if not pa.empty:
         s.append(
             f"\n## Per-asset results (CRPS_q vs {ref})\n\nCounts of assets by conclusion, then the detail.\n\n"
@@ -323,13 +346,19 @@ def render_markdown(store: ResearchStore, eid: str, res: dict, figs: list[str]) 
         s.append("\n</details>\n")
     if not cal.empty:
         s.append("\n## Calibration\n\nEmpirical coverage of central prediction intervals (nominal in the header) "
-                 "and the quantile calibration error (mean |share of outcomes ≤ q_τ − τ| over all levels). "
+                 "and the quantile calibration error (mean |share of outcomes ≤ q_τ − τ| over all levels), the PIT "
+                 "total-variation distance (0 = outcomes fall in each quantile bin as often as its width predicts) and "
+                 "the interval (Winkler) score of the 90% interval, which charges width and misses together. "
                  "Coverage is only meaningful with a large n; a narrow interval is good only if its coverage holds.\n\n")  # fmt: skip
         ci = cal[cal["kind"] == "interval"].pivot_table(index=["horizon", "model"], columns="nominal",
                                                         values=["empirical", "width"]).reset_index()  # fmt: skip
         ci.columns = [f"{a}_{b}" if b != "" else a for a, b in ci.columns]
         qce = lb.set_index(["horizon", "model"])["qce"]
         ci["qce"] = [qce.get((h, m), math.nan) for h, m in zip(ci["horizon"], ci["model"], strict=True)]
+        for col in ("pit_tv", "is_0.9"):
+            if col in lb:
+                v = lb.set_index(["horizon", "model"])[col]
+                ci[col] = [v.get((h, m), math.nan) for h, m in zip(ci["horizon"], ci["model"], strict=True)]
         ci["n"] = [
             int(lb[(lb["horizon"] == h) & (lb["model"] == m)]["n"].iloc[0])
             for h, m in zip(ci["horizon"], ci["model"], strict=True)
@@ -337,7 +366,7 @@ def render_markdown(store: ResearchStore, eid: str, res: dict, figs: list[str]) 
         cc = [("horizon", "h"), ("model", "model"), ("n", "n")]
         for c in cfg.interval_levels:
             cc += [(f"empirical_{c}", f"cov {c:.0%}"), (f"width_{c}", f"width {c:.0%}")]
-        cc.append(("qce", "QCE"))
+        cc += [("qce", "QCE"), ("pit_tv", "PIT TV"), ("is_0.9", "IS 90%")]
         s.append(md_table(ci, cc))
     if not ot.empty:
         s.append(f"\n## Performance over time\n\nCRPS_q improvement over `{ref}` per {'year' if cfg.domain == 'stocks' else 'month'} "

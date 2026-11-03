@@ -142,7 +142,12 @@ model produced a valid forecast and the realised target exists. Definitions
   separately and is not called CRPS.)
 - coverage of the central 50/80/90/98% intervals (closed intervals between the 0.25/0.75,
   0.1/0.9, 0.05/0.95 and 0.01/0.99 quantiles) and their average width
+- interval (Winkler) score of each central interval, `(u − l) + (2/a)(l − y)⁺ + (2/a)(y − u)⁺` with
+  `a = 1 − coverage`: a proper score that charges width and misses together
 - quantile calibration error: mean over levels of |share of outcomes ≤ q_τ − τ|
+- PIT histogram: the share of outcomes in each bin between consecutive quantile levels (and the two
+  tails) against the bin's width, plotted as observed / expected (`pit_h<h>.svg`), summarised by
+  its total-variation distance `0.5 Σ |observed − expected|`
 - Polymarket also reports MAE and RMSE in probability space, and pinball and CRPS_q of the
   inverse-logit quantiles (inverse logit is monotone, so quantiles map to quantiles).
 
@@ -164,6 +169,12 @@ interval comes from a moving-block bootstrap over origin dates: all assets at a 
 `max(ceil(h / stride), ceil(n_dates^(1/3)))` keep the overlap of multi-step targets and short-range
 dependence (2,000 resamples, seeded). An ordinary i.i.d. bootstrap is not used.
 
+Beside the bootstrap, each comparison reports a Diebold-Mariano test on the per-date mean
+differential (Newey-West variance with bandwidth `ceil(h / stride) − 1`, the Harvey-Leybourne-Newbold
+small-sample factor, normal reference distribution) and its Holm-adjusted p-value over every row of
+the comparison table. The conclusion label comes from the bootstrap interval; the DM p-values are a
+second, standard view and the Holm column is the one to read when scanning many rows.
+
 Conclusions:
 
 - **better** / **worse**: the interval excludes zero.
@@ -179,6 +190,10 @@ exclude zero by chance.
 - **Pooled** metrics give every scored case equal weight.
 - **Macro** metrics are the unweighted mean of per-asset metrics, so an asset with many origins
   (a long-lived market) does not dominate. Both are in the leaderboard and they are kept apart.
+- **Asset skill** (`asset_skill_mae`, `asset_skill_crps`): `1 − loss / loss(reference)` computed
+  within each asset, then averaged over assets. Pooled and macro losses still add up raw errors, so
+  volatile assets (NVDA, ^VIX, long-shot markets in logit space) dominate them; the skill average is
+  scale-free. When the three disagree, the skill average is the fairer cross-asset summary.
 - Per-asset, per-horizon, per-model and over-time (calendar year for stocks, month for Polymarket)
   tables, plus the overall leaderboard.
 
@@ -216,7 +231,8 @@ crypto-price thresholds, not prediction markets in general.
   samples.
 - Every result is conditional on the period studied. The over-time table shows whether an
   advantage holds across years or comes from one regime.
-- No multiple-testing correction is applied; the number of comparisons is reported instead.
+- The Holm adjustment covers the comparison table of one experiment, not every table or every
+  experiment run; the number of comparisons is reported as well.
 - There is no held-out final test period yet: nothing is tuned, so there is nothing to overfit,
   but any future model selection based on these reports must be validated on later data.
 
