@@ -1,0 +1,13 @@
+[Unit]
+Description=TimeBalance: stock ingestion after each US session close, plus a Saturday catch-up
+
+[Timer]
+# NYSE closes 20:00 or 21:00 UTC depending on DST; bars become available 30 min later.
+# One run per UTC day; the job slot (--slot-minutes 1440) makes a second run that day a no-op.
+OnCalendar=Mon..Fri 22:15 UTC
+OnCalendar=Sat 12:00 UTC
+Persistent=true
+RandomizedDelaySec=120
+
+[Install]
+WantedBy=timers.target

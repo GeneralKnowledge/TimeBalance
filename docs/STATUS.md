@@ -6,8 +6,8 @@ _Last updated 2026-11-03._
 
 | Milestone | State |
 |---|---|
-| M0 Foundation and Timestral integration | Done, pending review (branch `milestone/m0-timestral`) |
-| M1 Data ingestion and persistence | Not started |
+| M0 Foundation and Timestral integration | Done (PR #2, merged) |
+| M1 Data ingestion and persistence | Done, pending review (branch `milestone/m1-data`) |
 | M2–M5 | Not started |
 
 ## Environment (laptop `create`)
@@ -15,6 +15,45 @@ _Last updated 2026-11-03._
 Ubuntu, kernel 6.8; Intel i7-8750H (6 cores / 12 threads); 7.6 GB RAM + 4 GB swap; NVIDIA GTX 1060
 Max-Q 6 GB (compute capability 6.1), driver 550.163.01 (CUDA 12.4); Python 3.12.3; uv 0.13.7;
 torch 2.14.1+cu126; timestral at upstream commit `a534bdb`.
+
+## What works (M1, 2026-11-03)
+
+- `uv run mpe db init`: Alembic migration `0001` creates the full §7.2 schema in
+  `data/mpe.sqlite3` (WAL, foreign keys on). Prices, sizes and fees are `DecimalText` (TEXT
+  affinity, tested); timestamps are UTC ISO text. `BEFORE UPDATE/DELETE` triggers make
+  `forecasts`, `signals`, `orders` and `fills` immutable; `orders.is_paper = 1` is a CHECK.
+- `uv run mpe ingest backfill` on the laptop (one run, about 15 minutes, ~1,900 Polymarket
+  requests):
+  - Watchlist SPY, QQQ, IWM, GLD, TLT, NVDA, MSFT, AAPL, AMZN, ^VIX from 2010-01-04 (4,234
+    sessions each) and GBP/USD from 2010-01-02: 46,724 daily bars with adjusted close,
+    dividends and splits.
+  - Polymarket: 1,200 markets scanned and stored with `selection_reason`; 47 selected (35 open,
+    12 resolved: 7 YES, 5 NO), each with YES/NO token assets, 506,313 hourly price points,
+    59,056 hourly trade-volume rows, 70 order-book snapshots and 12 `resolutions` rows.
+  - 94 data-quality events (64 history gaps, 29 large moves, 1 FX OHLC inconsistency summary).
+- Idempotency, live: re-running the stock backfill gave 0 inserted / 46,724 unchanged / 0
+  corrected; an incremental Polymarket update right after (345 requests) inserted 98 new hourly
+  rows and corrected nothing.
+- `uv run mpe ingest update`: incremental for both categories, one `job_runs` row per slot (a
+  second run in the same slot is skipped). `deploy/install_user_timers.sh --enable` installs
+  systemd user timers: Polymarket every 30 min, stocks after each US close.
+- `uv run mpe data health [--json]`: rows, first/last bar, staleness per asset, quality events and
+  recent jobs.
+- Point-in-time accessor `get_history(asset_id, as_of, interval)` (tested with planted future
+  bars and later corrections).
+
+## M1 acceptance criteria
+
+| Criterion | Result |
+|---|---|
+| Both categories ingested; 10-instrument watchlist from 2010; 20–50 PM binary markets with token ids and history, ≥ 5 resolved | Pass: 10 + GBP/USD from 2010; 47 markets, 12 resolved |
+| Repeated ingestion idempotent | Pass (tests, and live re-run above) |
+| Injected failures (timeout, 429, malformed JSON) leave the DB unchanged | Pass: per-unit transactions; tested for a full outage, for one failing route, and for Yahoo |
+| Corrections create a new `version`; old rows untouched | Pass (tests; Yahoo `adj_close` last-digit noise is ignored, see DATA_SOURCES) |
+| Validation tests with mocked providers / recorded fixtures; no live API by default | Pass: 105 offline tests (52 new) |
+| `docs/DATA_SOURCES.md` documents endpoints, limits, licensing, gaps | Pass |
+
+Guard test `test_clock_injection` added: nothing in `src/` reads the wall clock except `clock.py`.
 
 ## What works (M0)
 
@@ -93,8 +132,11 @@ questions; M2 does the real evaluation.
 
 ## Outstanding issues / next steps
 
-- Review and merge M0. Then M1: Polymarket and yfinance providers, SQLite schema, point-in-time
-  accessor, `clock.py`, `test_clock_injection`, `test_point_in_time`.
+- Review and merge M1.
+- M2: read history only through `get_history`; build hourly Polymarket series and daily return
+  series from it; trading-calendar-aware target timestamps.
+- Possible data follow-ups: category quotas for the Polymarket panel; Data API v2 3-hour history
+  as a fallback; an Alpha Vantage cross-check if Yahoo degrades.
 - Batch API (many series per call) is available upstream but the adapter sends one series per
   call; add batching in M2 when walk-forward runs need throughput.
 - See `docs/KNOWN_LIMITATIONS.md`.
