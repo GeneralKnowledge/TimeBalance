@@ -1,0 +1,62 @@
+# Structured questions asked of decision models (mpe.decisions). Editing this file changes the
+# question-set hash recorded with every run, so older runs stay distinguishable.
+version: pm-questions/v1
+questions:
+  - id: resolves_yes
+    kind: binary
+    prompt: "What is the probability that this prediction market resolves YES?"
+    candidates: ["yes", "no"]
+    descriptions:
+      - "The market will resolve YES."
+      - "The market will resolve NO."
+    positive: "yes"
+
+  - id: direction_6h
+    kind: choice
+    prompt: "Over the next 6 hours, is the YES price more likely to rise, fall or stay roughly unchanged (within 1 point)?"
+    candidates: [rise, fall, unchanged]
+    descriptions:
+      - "The YES price will rise by more than 1 point."
+      - "The YES price will fall by more than 1 point."
+      - "The YES price will stay within 1 point of its current value."
+
+  - id: direction_24h
+    kind: choice
+    prompt: "Over the next 24 hours, is the YES price more likely to rise, fall or stay roughly unchanged (within 1 point)?"
+    candidates: [rise, fall, unchanged]
+    descriptions:
+      - "The YES price will rise by more than 1 point."
+      - "The YES price will fall by more than 1 point."
+      - "The YES price will stay within 1 point of its current value."
+
+  - id: regime
+    kind: choice
+    prompt: "Which description best fits the current state of this market?"
+    candidates: [trending_up, trending_down, range_bound, high_volatility, low_liquidity, unstable]
+    descriptions:
+      - "Trending upwards."
+      - "Trending downwards."
+      - "Range-bound."
+      - "High volatility."
+      - "Low liquidity or thin trading."
+      - "Unusual or unstable conditions."
+
+  - id: opportunity
+    kind: ordinal
+    prompt: "Does the available evidence support a potential paper-trading opportunity in this market?"
+    candidates: [strong_no, weak_no, none, weak_yes, strong_yes]
+    descriptions:
+      - "Strong NO opportunity: YES is clearly overpriced."
+      - "Weak NO opportunity."
+      - "No clear opportunity."
+      - "Weak YES opportunity."
+      - "Strong YES opportunity: YES is clearly underpriced."
+
+  - id: enough_information
+    kind: binary
+    prompt: "Is there enough information here to make a meaningful prediction about this market?"
+    candidates: [enough, not_enough]
+    descriptions:
+      - "Yes, the information is sufficient for a meaningful prediction."
+      - "No, the information is insufficient; abstain."
+    positive: enough
