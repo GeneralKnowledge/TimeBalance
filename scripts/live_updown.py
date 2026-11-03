@@ -59,8 +59,11 @@ def iso(ts: float) -> str:
 
 
 def gamma_market(slug: str) -> dict | None:
-    rows = http.get(f"{GAMMA}/markets", params={"slug": slug}).json()
-    return rows[0] if rows else None
+    for closed in ("false", "true"):  # Gamma hides closed markets unless asked for them
+        rows = http.get(f"{GAMMA}/markets", params={"slug": slug, "closed": closed}).json()
+        if rows:
+            return rows[0]
+    return None
 
 
 def klines(symbol: str, end_ms: int, n: int) -> np.ndarray:
