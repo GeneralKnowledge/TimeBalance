@@ -1,5 +1,6 @@
 # Market Prediction Engine settings. Paths are relative to the repository root.
 database_path: data/mpe.sqlite3
+research_database_path: data/research.sqlite3   # M2 experiment results; market data is read-only to research
 raw_dump_dir: data/raw            # raw provider payloads (gitignored)
 
 paper_trading:

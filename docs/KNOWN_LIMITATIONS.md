@@ -115,3 +115,55 @@ How the two replay modes work is described in `docs/DATA_SOURCES.md`, under "Rea
   for when each dividend became known. That is not built yet.
 - **M0 SPY numbers predate this change.** The M0 demo and sanity figures in `docs/STATUS.md` were
   computed from `adj_close`. The scripts now use `close`, so their output differs slightly.
+
+## Forecasting research laboratory (M2, 2026-11-03)
+
+How experiments work is in `docs/M2_RESEARCH_METHODOLOGY.md`.
+
+- **Every real result so far is reconstructed research.** All stored data was retrieved on
+  2026-11-03, so strict point-in-time replay of any earlier cutoff returns nothing. Strict
+  experiments are implemented and tested, but a strict experiment on real data only becomes
+  meaningful once the timers have collected data forward in time for months.
+- **Single-day targets only.** The stock horizon-`h` target is the one-day return `h` sessions
+  ahead, not the cumulative `h`-day return, because per-step quantiles cannot be added up. A direct
+  cumulative-return target would need a separate experiment design.
+- **Close-only price returns.** Targets exclude dividends (see M1.1 above). Splits are already in
+  Yahoo's `close`, so they do not create artificial returns.
+- **CRPS_q is truncated.** It integrates the pinball loss over the native levels [0.01, 0.99] only;
+  tail mass is not extrapolated, so it is below the full CRPS. It is valid for comparing models on
+  the same levels, not for comparison with CRPS values computed elsewhere.
+- **Baseline medians include their error median.** The M0 baselines put their median at the point
+  forecast plus the median in-sample error, so `zero` is not exactly zero and `persistence` is not
+  exactly the last value. The research lab uses the baselines unchanged.
+- **Dependence.** Overlapping multi-step targets and cross-correlated assets make the effective
+  sample far smaller than the case count. The moving-block bootstrap over origin dates is an
+  approximation; intervals are probably still somewhat narrow for 20-session targets.
+- **Limited multiple-testing control and no held-out final test period.** Diebold-Mariano p-values
+  are Holm-adjusted within one experiment's comparison table only. Nothing is tuned in M2, but later
+  model selection must be confirmed on new data.
+- **DM p-values use the normal distribution** (scipy is not a dependency). With at least 30 dates
+  per reported comparison the difference from the t(n−1) reference is negligible for decisions.
+- **Polymarket sample.** 47 high-volume binary markets from 2025–2026 (12 resolved), selected by
+  volume, multi-outcome events excluded. Results do not generalise to prediction markets at large.
+  The resolution analysis has 12 markets and supports no calibration claim. Prices pinned at 0 or
+  1 are clipped to `[1e-4, 1 − 1e-4]` before the logit, so logit errors near resolution are large
+  and bounded by the clip.
+- **`resolved_at` is the API's last update**, which can be later than the moment the outcome was
+  effectively known. The resolution analysis uses origins before both the scheduled close and
+  `resolved_at`; it cannot exclude origins after an outcome became obvious but before either.
+- **Research results are in a separate database** (`data/research.sqlite3`). The operational
+  `forecasts`, `evaluations` and `evaluation_summaries` tables are not used by M2.
+- **No Timestral batching.** The adapter still sends one series per call. Measured on the laptop
+  (5M, CPU, 16 series of 512 points, h = 20): one batch of 16 took 84 ms against 298 ms for 16
+  single calls, but the quantiles differed by up to 2.2e-8. Batching would therefore change
+  forecasts at the float level, and a resumed run (whose batches are made of whatever origins are
+  still pending) would not reproduce an uninterrupted one bit for bit. M2 keeps one series per call;
+  per-call overhead makes small models CPU-bound (5M ran at about 46 forecasts/s on the GPU with
+  the GPU about 33% busy). Batching with a fixed, recorded batch composition is a possible later
+  improvement.
+- **Data changes stop a resume.** Inputs are rebuilt on every run and compared with the stored
+  hashes; if the market database changed in a way that alters any context (for example a deleted
+  or newly backfilled bar inside a context), the run stops with `DataChanged` rather than mixing
+  inputs. Re-create the experiment with a new `targets_as_of` in that case.
+- **FX is not evaluated.** GBP/USD trades on a different calendar from XNYS; the stock domain
+  excludes it explicitly.

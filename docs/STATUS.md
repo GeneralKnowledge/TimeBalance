@@ -8,8 +8,9 @@ _Last updated 2026-11-03._
 |---|---|
 | M0 Foundation and Timestral integration | Done (PR #2, merged) |
 | M1 Data ingestion and persistence | Done (PR #3, merged) |
-| M1.1 Historical data integrity and ingestion reliability | Current: branch `milestone/m1.1-data-integrity`, PR open for review |
-| M2–M5 | Not started (M2 not implemented) |
+| M1.1 Historical data integrity and ingestion reliability | Done (PR #4, merged) |
+| M2 Forecasting research laboratory | Current: branch `milestone/m2-forecasting-lab`, PR open for review |
+| M3–M5 | Not started |
 
 ## Environment (laptop `create`)
 
@@ -17,7 +18,85 @@ Ubuntu, kernel 6.8; Intel i7-8750H (6 cores / 12 threads); 7.6 GB RAM + 4 GB swa
 Max-Q 6 GB (compute capability 6.1), driver 550.163.01 (CUDA 12.4); Python 3.12.3; uv 0.13.7;
 torch 2.14.1+cu126; timestral at upstream commit `a534bdb`.
 
-## M1.1 (2026-11-03, in review)
+## M2 forecasting research laboratory (2026-11-03, in review)
+
+`mpe research` runs walk-forward experiments (method: `docs/M2_RESEARCH_METHODOLOGY.md`). Results
+live in `data/research.sqlite3`; the market database is opened read-only. Reports are committed
+under `reports/experiments/`. All real experiments below ran on a read-only snapshot of the live
+database taken 2026-11-03 at about 11:38 UTC.
+
+**Every real result is reconstructed research.** All stored data was retrieved on 2026-11-03, so
+strict replay of earlier cutoffs is empty. The strict experiments `stocks-1434f4f6e825` (1,840
+origins) and `polymarket-39b8a053a14d` (11,026 origins) found no usable origin, which is correct.
+
+| experiment | domain | origins (usable) | scored cases per model | runtime |
+|---|---|---|---|---|
+| `stocks-4daa0990200b` | 10 XNYS assets, every session 2012-03-01 to 2026-09-29, h = 1/5/20 | 36,650 | 109,950 | ~1 h 45 min |
+| `polymarket-cd414105d4c8` | 46 of 47 panel markets (YES price, logit), every 6 h 2025-06-01 to 2026-11-01, h = 1/6/24 h | 38,623 (5,433 excluded) | 113,072 | ~3 h 20 min |
+| `stocks-d35cd4ace9ec` | CPU check: SPY, four Timestral sizes on CPU | 83 | 249 | 1 min |
+
+No forecast failed in any run (0 of 677,000+).
+
+### Stocks: no point-forecast edge, a small interval edge
+
+- **Median forecasts:** every Timestral size is within ±0.35% of the zero-return benchmark on MAE at
+  every horizon. Most comparisons show `no demonstrated difference`. The few labelled `better`
+  (209M, +0.1–0.2%) have Holm-adjusted Diebold-Mariano p-values above 0.6. **Timestral has not shown
+  that it predicts daily returns.**
+- **Probabilistic forecasts:** CRPS_q improves on `zero` by 0.9–1.7% at 1 session, 0.5–0.9% at 5 and
+  0.2–0.5% at 20 sessions. Most comparisons are significant after the Holm adjustment, the
+  per-asset skill average agrees (so it is not driven by volatile assets), and at 1 session
+  123M and 209M are better on all 10 assets. 90% intervals cover 89–90% for every model.
+  This edge is small and has not been tested against a volatility model (EWMA/GARCH).
+- **Size:** larger is slightly better on CRPS (209M ≥ 123M > 28M > 5M), by tenths of a percent.
+- **Baselines:** none beats `zero`; `persistence` and `momentum` are 45–150% worse on CRPS.
+
+### Polymarket: worse than the last price at 1 hour, better intervals at 6 and 24 hours
+
+- **1 hour:** Timestral is worse than the `persistence` baseline on MAE (4.8% for 209M to 11.6% for
+  5M) and no better on CRPS.
+- **6 and 24 hours:** CRPS_q is 2.6–2.8% (6 h) and 4.4–4.5% (24 h) better than `persistence` for
+  28M–209M, with 18–23 of 46 markets `better` and at most 1 `worse` at 6 h. 90% coverage is
+  88–89% against persistence's 84% at 24 h.
+- **Median at 24 h:** 1.9% better than the `persistence` baseline (Holm p ≈ 0.03–0.04). Caution: the
+  M0 persistence baseline adds the median of its own past errors, so it is not exactly the last
+  price; an interim check against the literal last price had Timestral's median about 1.5% *worse*
+  at 24 h. The interval advantage is the more robust finding.
+- **Resolution analysis:** 12 resolved markets, 11 scored. Too few for any calibration claim.
+- **Sample:** 46 markets (one had no usable origin); 3,105 origins lacked their own sample at the
+  cutoff, 1,648 had too short a history and 680 too many gaps. High-volume binary markets only.
+
+### Conclusions for the five M2 questions
+
+1. Timestral does **not** beat simple baselines at predicting the median price or return. It gives
+   slightly better-calibrated, sharper uncertainty: about 1% on stocks and 3–4% on Polymarket at
+   6–24 hours.
+2. Larger models are marginally better, by much less than the gap between sizes would suggest; 5M is clearly weakest on Polymarket.
+3. Its quantiles are well calibrated on stocks and as good as or better than the baselines' on
+   Polymarket.
+4. Polymarket differs: worse than the last price at 1 hour, better intervals at longer horizons.
+5. Stock interval gains hold on most assets; per-year tables are in the report. Polymarket gains
+   hold on about 40–50% of markets and are inconclusive on the rest.
+
+Nothing here supports a directional trading signal.
+
+### Hardware (GTX 1060 Max-Q, fp32, one series per call, context 512 / 336)
+
+| model | ms per forecast (stocks, GPU) | peak RSS | peak VRAM |
+|---|---|---|---|
+| timestral-5m | 20.1 | 1.70 GB | 28 MB |
+| timestral-28m | 25.5 | 1.76 GB | 115 MB |
+| timestral-123m | 38.0 | 1.78 GB | 481 MB |
+| timestral-209m | 44.8 | 2.22 GB | 813 MB |
+| baselines | 3.0–16.7 (CPU) | 1.70 GB | – |
+
+Models were loaded one at a time and released after each run. CPU execution of all four sizes was
+checked separately. Batching was measured (3.5× faster on CPU for 16 series) but not adopted,
+because its output is not bit-identical; see `KNOWN_LIMITATIONS.md`.
+
+Tests: 180 offline tests pass (48 new for M2), with 5 weights/GPU tests deselected by default.
+
+## M1.1 (2026-11-03, merged)
 
 - Two separate history read paths. `get_history` is strict point-in-time replay, unchanged and
   still the default. The new `replay.get_reconstructed_history` reads backfilled data under
@@ -152,12 +231,9 @@ questions; M2 does the real evaluation.
 
 ## Outstanding issues / next steps
 
-- Review and merge M1.1.
-- M2 (not started): read history through `get_history` (strict) or `get_reconstructed_history`
-  (backfill research, recorded as such in run metadata). Build daily `close` return series and
-  hourly Polymarket series from them, with trading-calendar-aware target timestamps.
+- Review and merge M2. Possible follow-ups (not done): an EWMA/GARCH volatility baseline to test
+  whether Timestral's interval edge is more than volatility clustering; strict experiments once the
+  timers have collected months of forward data.
 - Possible data follow-ups: category quotas for the Polymarket panel; Data API v2 3-hour history
   as a fallback; an Alpha Vantage cross-check if Yahoo degrades.
-- Batch API (many series per call) is available upstream but the adapter sends one series per
-  call; add batching in M2 when walk-forward runs need throughput.
 - See `docs/KNOWN_LIMITATIONS.md`.

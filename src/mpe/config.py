@@ -75,6 +75,7 @@ class Stocks(BaseModel):
 
 class Settings(BaseModel):
     database_path: str = "data/mpe.sqlite3"
+    research_database_path: str = "data/research.sqlite3"  # M2 experiment results (separate file)
     raw_dump_dir: str = "data/raw"
     paper_trading: PaperTrading = Field(default_factory=PaperTrading)
     http: Http = Field(default_factory=Http)
@@ -105,10 +106,12 @@ def _load(path: Path) -> dict:
 
 
 def load_settings(path: Path | None = None) -> Settings:
-    """Settings from YAML. ``MPE_DATABASE`` overrides ``database_path`` (tests, scratch runs)."""
+    """Settings from YAML. ``MPE_DATABASE`` / ``MPE_RESEARCH_DATABASE`` override the database paths."""
     data = _load(path or CONFIG_DIR / "settings.yaml")
     if os.environ.get("MPE_DATABASE"):
         data["database_path"] = os.environ["MPE_DATABASE"]
+    if os.environ.get("MPE_RESEARCH_DATABASE"):
+        data["research_database_path"] = os.environ["MPE_RESEARCH_DATABASE"]
     return Settings.model_validate(data)
 
 
