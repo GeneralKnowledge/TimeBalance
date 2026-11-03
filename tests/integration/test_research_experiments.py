@@ -11,6 +11,14 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import pytest
+
+from mpe.research import analysis as A
+from mpe.research import data as D
+from mpe.research.config import BASELINE_MODELS, ExperimentConfig, default_config, model_spec
+from mpe.research.report import write_report
+from mpe.research.runner import DataChanged, ExperimentRunner, VersionChanged
+from mpe.research.store import ExperimentExists, ResearchStore, make_research_engine
+from mpe.storage.replay import KnowledgeMode
 from tests.research_fakes import (
     BACKFILLED,
     NOW,
@@ -25,14 +33,6 @@ from tests.research_fakes import (
     stock_records,
     utc,
 )
-
-from mpe.research import analysis as A
-from mpe.research import data as D
-from mpe.research.config import BASELINE_MODELS, ExperimentConfig, default_config, model_spec
-from mpe.research.report import write_report
-from mpe.research.runner import DataChanged, ExperimentRunner, VersionChanged
-from mpe.research.store import ExperimentExists, ResearchStore, make_research_engine
-from mpe.storage.replay import KnowledgeMode
 
 ROOT = Path(__file__).resolve().parents[2]
 FAST = {"n_origins": 30, "max_context": 4096}
@@ -141,7 +141,9 @@ def test_config_serialisation_and_identity():
 
 # ------------------------------------------------------------------ origins
 def test_stock_origins_follow_the_exchange_calendar(market):
-    cfg = stock_cfg(origin_start=utc(2023, 11, 20), origin_end=utc(2023, 11, 30), origin_stride=1, horizons=[1, 2])
+    cfg = stock_cfg(
+        origin_start=utc(2023, 11, 20), origin_end=utc(2023, 11, 30), origin_stride=1, horizons=[1, 2]
+    )
     with market.factory() as s:
         assets, _ = D.resolve_assets(s, cfg)
         grid = D.make_grid(cfg, utc(2022, 10, 1))
@@ -175,7 +177,10 @@ def test_polymarket_origins_hourly_and_sample_availability(market):
         # 05:01:00 it is not yet usable, so the origin has no observation of its own
         late = pm_cfg(origin_stride=1, cutoff_delay_seconds=60)
         b2 = D.OriginBuilder(s, late, D.make_grid(late, utc(2023, 12, 1)))
-        assert b2.prepare_origin(assets[0], pd.Timestamp("2024-01-10 05:00Z")).reason == "origin_observation_missing"
+        assert (
+            b2.prepare_origin(assets[0], pd.Timestamp("2024-01-10 05:00Z")).reason
+            == "origin_observation_missing"
+        )
         # the YES token price is used, never the NO token's
         b_ = D.OriginBuilder(s, cfg, D.make_grid(cfg, utc(2023, 12, 1)))
         pb = b_.prepare_origin(assets[1], pd.Timestamp("2024-01-10 05:00Z"))
@@ -203,8 +208,12 @@ def test_planted_future_values_never_reach_the_context(market):
         before = b.prepare_origin(assets[0], t_o)
     spike_day = sessions("2023-07-05", "2023-07-05")
     corr_day = sessions("2023-06-30", "2023-06-30")
-    market.add_stock_records("SPY", stock_records("SPY", spike_day, [1e6], retrieved=BACKFILLED + timedelta(days=1)))
-    market.add_stock_records("SPY", stock_records("SPY", corr_day, [1.0], retrieved=BACKFILLED + timedelta(days=2)))
+    market.add_stock_records(
+        "SPY", stock_records("SPY", spike_day, [1e6], retrieved=BACKFILLED + timedelta(days=1))
+    )
+    market.add_stock_records(
+        "SPY", stock_records("SPY", corr_day, [1.0], retrieved=BACKFILLED + timedelta(days=2))
+    )
     with market.factory() as s:
         b = D.OriginBuilder(s, cfg, D.make_grid(cfg, utc(2022, 10, 1)))
         after = b.prepare_origin(assets[0], t_o)
@@ -239,7 +248,9 @@ def test_replay_mode_dispatch_is_explicit(market, monkeypatch):
     calls = []
     orig_strict, orig_rec = D.get_history, D.get_reconstructed_history
     monkeypatch.setattr(D, "get_history", lambda *a, **k: calls.append("strict") or orig_strict(*a, **k))
-    monkeypatch.setattr(D, "get_reconstructed_history", lambda *a, **k: calls.append("rec") or orig_rec(*a, **k))
+    monkeypatch.setattr(
+        D, "get_reconstructed_history", lambda *a, **k: calls.append("rec") or orig_rec(*a, **k)
+    )
     with market.factory() as s:
         D.read_history(s, KnowledgeMode.STRICT, 1, NOW, "1d", "yfinance")
         D.read_history(s, KnowledgeMode.RECONSTRUCTED, 1, NOW, "1d", "yfinance")
@@ -254,7 +265,7 @@ def test_replay_mode_dispatch_is_explicit(market, monkeypatch):
 
 def test_strict_experiment_sees_nothing_that_was_only_backfilled(market, store):
     cfg = stock_cfg(knowledge_mode="strict_point_in_time")
-    eid, r, res = run(market, store, cfg)
+    eid, _r, res = run(market, store, cfg)
     prep = store.get(eid).prepare
     assert all(a["ok_origins"] == 0 for a in prep["assets"].values())
     assert res["status"] == "completed"  # nothing to forecast is a valid, reported outcome
@@ -271,11 +282,14 @@ def test_strict_experiment_uses_data_captured_in_time(tmp_path, store):
         object.__setattr__(r, "retrieved_at", r.available_at + timedelta(hours=1))
     db.add_stock_records("SPY", recs)
     cfg = stock_cfg(knowledge_mode="strict_point_in_time", assets=["SPY"], cutoff_delay_seconds=1800 + 3600)
-    eid, r, res = run(db, store, cfg)
+    eid, r, _res = run(db, store, cfg)
     sc = A.load_scored(store, eid)
     assert not sc.rows.empty
     with sqlite3.connect(tmp_path / "research.sqlite3") as c:
-        prov = [json.loads(p) for (p,) in c.execute("select provenance_json from research_origins where status='ok'")]
+        prov = [
+            json.loads(p)
+            for (p,) in c.execute("select provenance_json from research_origins where status='ok'")
+        ]
     assert all(p["knowledge_mode"] == "strict_point_in_time" and p["reconstructed"] == 0 for p in prov)
 
 
@@ -289,9 +303,11 @@ def test_extra_replay_latency_is_respected(market):
 
 
 def test_reconstructed_provenance_is_preserved(market, store):
-    eid, r, res = run(market, store, stock_cfg(models=fast_models(["zero"]), reference_baseline="zero"))
+    eid, _r, _res = run(market, store, stock_cfg(models=fast_models(["zero"]), reference_baseline="zero"))
     with sqlite3.connect(Path(store.engine.url.database)) as c:
-        prov = json.loads(c.execute("select provenance_json from research_origins where status='ok' limit 1").fetchone()[0])
+        prov = json.loads(
+            c.execute("select provenance_json from research_origins where status='ok' limit 1").fetchone()[0]
+        )
         knowledge = {k for (k,) in c.execute("select distinct knowledge from research_targets")}
     assert prov["knowledge_mode"] == "reconstructed_history" and prov["reconstructed"] > 0
     assert prov["sources"] == ["yfinance"]
@@ -308,12 +324,14 @@ def test_research_package_reads_observations_only_through_replay_accessors():
         for fn in [n for n in ast.walk(tree) if isinstance(n, ast.FunctionDef)]:
             names = {n.id for n in ast.walk(fn) if isinstance(n, ast.Name)}
             if "Observation" in names:
-                assert (p.name, fn.name) == ("data.py", "describe_assets"), f"{p.name}:{fn.name} queries observations"
+                assert (p.name, fn.name) == ("data.py", "describe_assets"), (
+                    f"{p.name}:{fn.name} queries observations"
+                )
 
 
 # ------------------------------------------------------------------ execution
 def test_end_to_end_all_baselines_and_fake_timestral(market, store):
-    eid, r, res = run(market, store, stock_cfg())
+    eid, _r, res = run(market, store, stock_cfg())
     assert res["status"] == "completed"
     assert set(res["models"]) == set(MODELS)
     # models were loaded one at a time and each was unloaded
@@ -346,7 +364,7 @@ def test_invalid_outputs_and_model_errors_are_recorded(market, store):
     bad = {"2023-06-08 20:00:00+00:00"}  # EDT: the session closes at 20:00Z
     fail = {"2023-06-15 20:00:00+00:00"}
     factory = fake_factory(**{"timestral-5m": {"bad_output_on": bad, "fail_on": fail}})
-    eid, r, res = run(market, store, stock_cfg(), factory=factory)
+    eid, _r, res = run(market, store, stock_cfg(), factory=factory)
     assert res["models"]["timestral-5m"]["failed"] == 4  # 2 assets x 2 origins
     sc = A.load_scored(store, eid)
     assert sc.exclusions["forecast_failures"] == {"timestral-5m": 4}
@@ -388,9 +406,14 @@ def test_interrupted_run_resumes_without_duplicates(market, store):
     assert res["models"]["timestral-209m"]["new"] == len(r2.prepare(eid).ok) - done_before
     assert res["models"]["timestral-5m"]["new"] == 0
     with sqlite3.connect(Path(store.engine.url.database)) as c:
-        n, d = c.execute("select count(*), count(distinct model_name||asset||origin_ts) from research_forecasts").fetchone()
+        n, d = c.execute(
+            "select count(*), count(distinct model_name||asset||origin_ts) from research_forecasts"
+        ).fetchone()
     assert n == d
-    assert [x["status"] for x in store2.model_runs(eid) if x["model_name"] == "timestral-209m"] == ["interrupted", "completed"]
+    assert [x["status"] for x in store2.model_runs(eid) if x["model_name"] == "timestral-209m"] == [
+        "interrupted",
+        "completed",
+    ]
 
 
 def test_batches_and_duplicate_execution(market, store):
@@ -422,7 +445,7 @@ def test_configuration_survives_restart_and_ids_do_not_collide(tmp_path, market)
 
 
 def test_stored_results_are_immutable(market, store):
-    eid, *_ = run(market, store, stock_cfg(models=fast_models(["zero"]), reference_baseline="zero"))
+    _eid, *_ = run(market, store, stock_cfg(models=fast_models(["zero"]), reference_baseline="zero"))
     db = Path(store.engine.url.database)
     with sqlite3.connect(db) as c:
         for sql in ("update research_forecasts set status='ok'", "delete from research_forecasts",
@@ -445,7 +468,7 @@ def test_changed_data_is_detected_on_resume(market, store):
 
 def test_model_version_change_is_refused(market, store):
     cfg = stock_cfg(models=fast_models(["timestral-5m", "zero"]), reference_baseline="zero")
-    eid, r, _ = run(market, store, cfg, max_forecasts=4)
+    eid, _r, _ = run(market, store, cfg, max_forecasts=4)
     r2 = ExperimentRunner(market.factory, store, clock(),
                           model_factory=fake_factory(**{"timestral-5m": {"version": "fake-rev-2"}}))  # fmt: skip
     res = r2.run(eid)
@@ -467,18 +490,18 @@ def test_failed_model_load_keeps_diagnostics(market, store):
         return base(spec)
 
     cfg = stock_cfg(models=fast_models(["timestral-5m", "zero"]), reference_baseline="zero")
-    eid, r, res = run(market, store, cfg, factory=factory)
+    eid, _r, res = run(market, store, cfg, factory=factory)
     assert res["models"]["timestral-5m"]["status"] == "failed"
     assert res["models"]["zero"]["status"] == "completed"  # the next model still runs
     assert res["status"] == "failed"
     assert store.get(eid).status == "failed"
-    run5 = [x for x in store.model_runs(eid) if x["model_name"] == "timestral-5m"][0]
+    run5 = next(x for x in store.model_runs(eid) if x["model_name"] == "timestral-5m")
     assert "weights missing" in run5["error"]
 
 
 # ------------------------------------------------------------------ evaluation
 def test_polymarket_experiment_probability_space_and_resolution(market, store):
-    eid, r, res = run(market, store, pm_cfg())
+    eid, _r, res = run(market, store, pm_cfg())
     assert res["status"] == "completed"
     sc = A.load_scored(store, eid)
     assert {"mae_p", "rmse_p"} <= set(A.leaderboard(sc).columns)
@@ -495,7 +518,11 @@ def test_polymarket_experiment_probability_space_and_resolution(market, store):
 
 
 def test_paired_comparisons_and_small_sample_label(market, store):
-    eid, *_ = run(market, store, stock_cfg(origin_stride=1, models=fast_models(["timestral-5m", "zero", "moving_average"])))
+    eid, *_ = run(
+        market,
+        store,
+        stock_cfg(origin_stride=1, models=fast_models(["timestral-5m", "zero", "moving_average"])),
+    )
     sc = A.load_scored(store, eid)
     same = A.paired(sc, "zero", "zero", 1, "mae")
     assert same["mean_diff"] == 0 and same["ci_low"] == 0 and same["ci_high"] == 0
@@ -511,7 +538,9 @@ def test_pooled_and_macro_aggregation_differ_with_unbalanced_assets(market, stor
     cfg = stock_cfg(models=fast_models(["zero", "persistence"]), reference_baseline="zero")
     eid, *_ = run(market, store, cfg)
     sc = A.load_scored(store, eid)
-    sc.rows = sc.rows[~((sc.rows["asset"] == "QQQ") & (sc.rows["origin_ts"] > "2023-07-01"))].reset_index(drop=True)
+    sc.rows = sc.rows[~((sc.rows["asset"] == "QQQ") & (sc.rows["origin_ts"] > "2023-07-01"))].reset_index(
+        drop=True
+    )
     sc.below = sc.below[: len(sc.rows)]
     lb = A.leaderboard(sc)
     r = lb[(lb["model"] == "persistence") & (lb["horizon"] == 1)].iloc[0]

@@ -230,11 +230,11 @@ def render_markdown(store: ResearchStore, eid: str, res: dict, figs: list[str]) 
     )
     unit = "trading sessions" if cfg.domain == "stocks" else "hours"
     ref = cfg.reference_baseline
-    s = [f"# Experiment `{eid}`: {cfg.name}\n",
-         f"> **{_mode_label(cfg.knowledge_mode.value)}**\n",
+    s = [f"# Experiment `{eid}`: {cfg.name}\n\n",
+         f"> **{_mode_label(cfg.knowledge_mode.value)}**\n\n",
          (f"Status: **{exp.status}**. Created {exp.created_at} at code version `{exp.code_version}`. "
-          "This is forecasting research. It is not a trading signal and says nothing about profitability.\n")]  # fmt: skip
-    s.append("## Configuration\n")
+          "This is forecasting research. It is not a trading signal and says nothing about profitability.\n\n")]  # fmt: skip
+    s.append("## Configuration\n\n")
     s.append("| field | value |\n|---|---|\n")
     target = ("daily log return of `close`" if cfg.target == "log_return"
               else f"logit of the YES token price (eps {cfg.logit_eps}); probabilities via inverse logit")  # fmt: skip
@@ -248,10 +248,10 @@ def render_markdown(store: ResearchStore, eid: str, res: dict, figs: list[str]) 
         ("horizons", ", ".join(f"{h}" for h in cfg.horizons) + f" {unit}"), ("quantile levels", f"{len(cfg.quantile_levels)} in [{min(cfg.quantile_levels)}, {max(cfg.quantile_levels)}]"),
         ("reference baseline", ref), ("seed / device requested", f"{cfg.seed} / {cfg.device}"),
         ("availability rule", cfg.availability.get("rule", "")),
-        ("model versions", ", ".join(f"{k}={v[:12]}" for k, v in sorted(exp.model_versions.items()))),
+        ("model versions", ", ".join(f"{k}={v[:12] if len(v) == 40 else v}" for k, v in sorted(exp.model_versions.items()))),
     ]  # fmt: skip
     s += [f"| {a} | {html.escape(str(b))} |\n" for a, b in rows]
-    s.append("\n## Data and exclusions\n")
+    s.append("\n## Data and exclusions\n\n")
     prep = exp.prepare or {}
     assets = prep.get("assets", {})
     n_ok = sum(a.get("ok_origins", 0) for a in assets.values())

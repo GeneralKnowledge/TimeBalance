@@ -7,10 +7,10 @@ import json
 import numpy as np
 import pandas as pd
 import pytest
-from tests.research_fakes import NOW, FakeTimestral, MarketDB, clock, random_walk, sessions
 
 from mpe import main as cli
 from mpe.research import runner as runner_mod
+from tests.research_fakes import NOW, FakeTimestral, MarketDB, clock, random_walk, sessions
 
 
 @pytest.fixture
@@ -50,7 +50,11 @@ def test_assets_listing(env, capsys):
     assert rc == 0 and "SPY" in out and "QQQ" in out
     rc, out, _ = mpe([*base, "assets", "--domain", "polymarket", "--json"], capsys)
     rows = json.loads(out)
-    assert rows[0]["key"] == "0xa" and rows[0]["observations"] > 1000 and rows[0]["first"].startswith("2023-12-20")
+    assert (
+        rows[0]["key"] == "0xa"
+        and rows[0]["observations"] > 1000
+        and rows[0]["first"].startswith("2023-12-20")
+    )
 
 
 def test_create_run_show_report_export(env, capsys, tmp_path):
@@ -71,7 +75,16 @@ def test_create_run_show_report_export(env, capsys, tmp_path):
     assert rc == 0 and f"experiment {eid}: completed" in out
     rc, out, _ = mpe([*base, "show", eid], capsys)
     assert "RECONSTRUCTED RESEARCH" in out and "timestral-5m" in out and "rel_mae" in out
-    for section in ("models", "horizons", "assets", "calibration", "comparisons", "exclusions", "runs", "config"):
+    for section in (
+        "models",
+        "horizons",
+        "assets",
+        "calibration",
+        "comparisons",
+        "exclusions",
+        "runs",
+        "config",
+    ):
         rc, out, _ = mpe([*base, "show", eid, "--section", section], capsys)
         assert rc == 0 and out.strip()
     rc, out, _ = mpe([*base, "show", eid, "--json"], capsys)
@@ -81,7 +94,9 @@ def test_create_run_show_report_export(env, capsys, tmp_path):
     assert path.startswith(str(reports / eid)) and (reports / eid).exists()
     rc, out, _ = mpe([*base, "export", eid, "--format", "csv", "--out", str(tmp_path / "x")], capsys)
     f = pd.read_csv(tmp_path / "x" / "forecasts.csv")
-    assert {"model", "asset", "origin_ts", "horizon", "target_ts", "median", "q0.5", "q0.99"} <= set(f.columns)
+    assert {"model", "asset", "origin_ts", "horizon", "target_ts", "median", "q0.5", "q0.99"} <= set(
+        f.columns
+    )
     assert len(f) == 3 * f[["model", "asset", "origin_ts"]].drop_duplicates().shape[0]
     rc, out, _ = mpe([*base, "export", eid, "--format", "json", "--out", str(tmp_path / "j")], capsys)
     assert json.loads((tmp_path / "j" / "leaderboard.json").read_text())
@@ -91,7 +106,7 @@ def test_create_run_show_report_export(env, capsys, tmp_path):
 
 def test_polymarket_create_defaults(env, capsys):
     base, _, _ = env
-    rc, out, _ = mpe([*base, "create", "--domain", "polymarket", "--mode", "strict", "--start", "2024-01-05",
+    _rc, out, _ = mpe([*base, "create", "--domain", "polymarket", "--mode", "strict", "--start", "2024-01-05",
                       "--end", "2024-01-20", "--targets-as-of", "2024-02-01", "--models", "zero", "--print"], capsys)  # fmt: skip
     cfg = json.loads(out)
     assert cfg["knowledge_mode"] == "strict_point_in_time" and cfg["assets"] == ["0xa"]

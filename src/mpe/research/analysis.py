@@ -27,7 +27,7 @@ from sqlalchemy import select
 from mpe.features.transforms import inv_logit
 from mpe.research import metrics as M
 from mpe.research.config import BASELINE_MODELS, TIMESTRAL_MODELS, ExperimentConfig
-from mpe.research.store import ResearchStore, forecasts, origins, targets, unpack
+from mpe.research.store import ResearchStore, forecasts, origins, targets
 
 LOSSES = {"mae": "abs_err", "mse": "sq_err", "crps": "crps"}
 
@@ -75,9 +75,9 @@ def load_scored(store: ResearchStore, eid: str) -> Scored:
                 excl["targets"][key] = excl["targets"].get(key, 0) + 1
                 continue
             case_y[(a, o, h)] = (tr.value, tr.level, t)
-    # forecasts
+    # forecasts (decoded in bulk: an experiment can hold hundreds of thousands)
     models = cfg.model_names
-    recs = []
+    ok_rows = [r for r in frows if r.status == "ok"]
     ok_by_model: dict[str, set] = {m: set() for m in models}
     for r in frows:
         if r.status != "ok":
@@ -87,43 +87,35 @@ def load_scored(store: ResearchStore, eid: str) -> Scored:
                 ex.append({"asset": r.asset, "origin": r.origin_ts, "error": r.error})
             continue
         ok_by_model.setdefault(r.model_name, set()).add((r.asset, r.origin_ts))
-        recs.append(
-            (
-                r.model_name,
-                r.asset,
-                r.origin_ts,
-                unpack(r.median, (len(hz),)),
-                unpack(r.quantiles, (len(hz), K)),
-            )
-        )
     common_origins = set.intersection(*(ok_by_model[m] for m in models)) if models else set()
     missing_any = set().union(*ok_by_model.values()) - common_origins if ok_by_model else set()
     excl["origins_without_all_models"] = len(missing_any)
     excl["not_yet_forecast"] = {m: len(set(ok_origins) - ok_by_model[m]) for m in models}
-    cols: dict[str, list] = {k: [] for k in ("model", "asset", "origin_ts", "horizon", "target_ts", "y", "y_level",
-                                              "yhat", "last_value", "last_level")}  # fmt: skip
-    qs = []
-    for m, a, o, med, q in recs:
-        if (a, o) not in common_origins:
-            continue
-        orow = ok_origins[(a, o)]
-        for j, h in enumerate(hz):
-            yy = case_y.get((a, o, h))
-            if yy is None:
-                continue
-            cols["model"].append(m)
-            cols["asset"].append(a)
-            cols["origin_ts"].append(o)
-            cols["horizon"].append(h)
-            cols["target_ts"].append(yy[2])
-            cols["y"].append(yy[0])
-            cols["y_level"].append(yy[1])
-            cols["yhat"].append(med[j])
-            cols["last_value"].append(orow.last_value)
-            cols["last_level"].append(orow.last_level)
-            qs.append(q[j])
-    df = pd.DataFrame(cols)
-    Q = np.asarray(qs, dtype=np.float64).reshape(-1, K)
+    nH = len(hz)
+    med = np.frombuffer(b"".join(r.median for r in ok_rows), dtype="<f8").reshape(-1, nH)
+    qa = np.frombuffer(b"".join(r.quantiles for r in ok_rows), dtype="<f8").reshape(-1, nH, K)
+    fdf = pd.DataFrame({"model": [r.model_name for r in ok_rows], "asset": [r.asset for r in ok_rows],
+                        "origin_ts": [r.origin_ts for r in ok_rows], "fidx": np.arange(len(ok_rows))})  # fmt: skip
+    keep = [(a, o) in common_origins for a, o in zip(fdf["asset"], fdf["origin_ts"], strict=True)]
+    fdf = fdf[np.asarray(keep, dtype=bool)]
+    cases = pd.DataFrame(
+        [(a, o, j, h, yy[2], yy[0], yy[1], ok_origins[(a, o)].last_value, ok_origins[(a, o)].last_level)
+         for (a, o, h), yy in case_y.items() for j in [hz.index(h)]],
+        columns=["asset", "origin_ts", "hidx", "horizon", "target_ts", "y", "y_level", "last_value", "last_level"],
+    )  # fmt: skip
+    keys = {"asset": object, "origin_ts": object}
+    df = fdf.astype(keys).merge(cases.astype(keys), on=["asset", "origin_ts"], how="inner")
+    order = {m: i for i, m in enumerate(models)}
+    df = (
+        df.assign(_m=df["model"].map(order))
+        .sort_values(["_m", "asset", "origin_ts", "horizon"])
+        .drop(columns="_m")
+    )
+    df = df.reset_index(drop=True)
+    fi, hi = df["fidx"].to_numpy(), df["hidx"].to_numpy()
+    df["yhat"] = med[fi, hi] if len(df) else np.zeros(0)
+    Q = qa[fi, hi, :] if len(df) else np.zeros((0, K))
+    df = df.drop(columns=["fidx", "hidx"])
     df["origin_ts"] = pd.to_datetime(df["origin_ts"], utc=True)
     df["target_ts"] = pd.to_datetime(df["target_ts"], utc=True)
     below = _score(df, Q, cfg, levels)

@@ -241,7 +241,7 @@ class ExperimentRunner:
         n_new = n_failed = 0
         infer_ms = 0.0
         device = None
-        status, error = "running", None
+        status, error, version = "running", None, None
         t0 = time.perf_counter()
         try:
             model = manager.get(spec.name)
@@ -302,6 +302,7 @@ class ExperimentRunner:
             self.store.finish_model_run(
                 run_id, self.clock.now(), status=status, error=error, device=device, n_new_forecasts=n_new,
                 n_failed=n_failed, inference_ms_total=infer_ms, wall_seconds=time.perf_counter() - t0,
+                model_version=version,
                 peak_rss_mb=peak_rss / 2**20, peak_vram_mb=_vram_peak(vram),
             )  # fmt: skip
             if self.progress:
