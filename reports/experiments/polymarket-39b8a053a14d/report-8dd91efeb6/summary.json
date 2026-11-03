@@ -1,0 +1,1460 @@
+{
+  "calibration": [],
+  "code_version_at_creation": "749a6f6bf8dc0a7543459ab8231711820ce78ffb",
+  "comparisons": [],
+  "config": {
+    "assets": [
+      "0x5db999fad322cea2914535aae5517060c3f80ad6d8c0231cde2124a434d16846",
+      "0x0b4cc3b739e1dfe5d73274740e7308b6fb389c5af040c3a174923d928d134bee",
+      "0xd9fb1184af0064e5e34b129f5b79afa5a17b7e32f2953ab05efed82315fee6d4",
+      "0x747dc809fb79e1b05be09c42d6179459a58de2ef3e40f02484a4e1260f741f75",
+      "0xd595eb9b81885ff018738300c79047e3ec89e87294424f57a29a7fa9162bf116",
+      "0xbb4d51e6364066d92eb6f9b8413dd7193de70966736044463b205834805a1f3b",
+      "0x6bd56627aa21311850825edb27e53434a0e17a4f782be0086bc07f71eee00d0d",
+      "0x9cb23d04b2ded06147482076688b69b487a8d982c63ebdda2ab3678cf27cf390",
+      "0xa4ddc18895cc7b14810283ef8f113939abffd3969c6a0e37f1897110c67e6f73",
+      "0xa467b14d51f01b957109d9cbb1d6c124fab2a089d52ed8f471d23c2812e743b7",
+      "0x5c79dfde05559b79a9cb9f7c4187e4d49632dd042572ae676952f812732591cc",
+      "0x48b0b0bca515f68fccf95af4793dbd0edbfec1f8ec6e8df2c0f69ba74f8c4722",
+      "0xaa5cdb6830cbfa2ca711b7cf93bd42cf4f8e062d44ea188c0b8ec1fb2924c083",
+      "0x890fc3ba40458db0b67560691aa1597344c2a0560d18e80f586a4b35f510b4ce",
+      "0x024b68f77bfc019341ee3db8f57c103334e4b9430bba4746d8c94aafd8b36fee",
+      "0x752fa61c93f16c4b15e85b0bd438d9c684176b0ea7b319a84c8aca34616e8a8c",
+      "0x377e7fe65cf198a7fc4fdae3f2136b74729279267858daaf96718b23bc2a5607",
+      "0x6fefc0438c7598b23531457c8c60541990d0786bd4bd9dfc3eabc8d95c291092",
+      "0x3de0f3d7d7efb40cde68e814d40a0b232832083653c8e78260eb999baa967de0",
+      "0x3b0107a80edd066fe987784d7ab5963c177888433efbec10689951c17320606c",
+      "0xce3c54c3e773e8b3bf73e4c12af93205b21195d03b9c386e22f274b9acfc2c56",
+      "0xa885bfe10688056a9d0f4e9a1523bfa18f66fda065f0400d714ba54776083713",
+      "0x46ca741da4abd7ffa993f59ac65bfe83de43ae027accac71d263a493e44064e7",
+      "0x9345d5142a67f5541264c96515496affee02580f1c572680759eac9fd2a1588a",
+      "0x405b56fc75f56d7635a94df9836d6cb6f9b9571d1fd33eb165c1e59d1d11801f",
+      "0xdaa4866bae18be58c5a79d2aeeffd035ec78f1bb49dbd88f72993997778a990f",
+      "0x79b7408f02df2eba4034ca4c06ddf17b8dbeacc5adbe8595969e7573912c4e3b",
+      "0x51f624dbbf14f9edb575fef1be6f7a303751de70783fa144fce27b957452c803",
+      "0x2745c38ff0617cb345c1d2df19b4f74ea777508e07411e88eeb6ab3affcda2a2",
+      "0x80ebf0a88a44bf737d4047b3accd7108285c69b84257e5c684bdc4c715c81139",
+      "0xf2bf04609e7458df56c9bb4b1e051286dea11da1c944bbc1dafbcc6b76904e52",
+      "0xe6d5e5da83874cd82c9b651a8a5d4fc541a800a295fb62e85124b4f5a04a4b7d",
+      "0xbe9d61d80c767264a0adc8a16453fbcaf0413e673e665cc7c14701691143fac0",
+      "0x4c80df6f557bb0b9de08c0301ebdce500dd9bdc58400d9269fb8fab1709ed584",
+      "0x32e869cb0f7316273417ec79aa94c8a139f8c390ebff8a24150a18753d257f8e",
+      "0x3733a1b647e7364095736ab0966465d896a84cf3b6bc1695ca1f26c3239b3868",
+      "0x6d0e09d0f04572d9b1adad84703458b0297bc5603b69dccbde93147ee4443246",
+      "0xd86a816093fcd0a0e1ca440bc5ce199bd3c5a8d6139e044b076958164f8c5423",
+      "0x4c5701bcde0b8fb7d7f48c8e9d20245a6caa58c61a77f981fad98f2bfa0b1bc7",
+      "0x43ec78527bd98a0588dd9455685b2cc82f5743140cb3a154603dc03c02b57de5",
+      "0xa93b28a6384aefff4e7d5adb2061c444e4a0e95b8ad17755f9cee123c7099b35",
+      "0xd4bbf7f6707c67beb736135ad32a41f6db41f8ae52d3ac4919650de9eeb94ed8",
+      "0x7cb525e831729325d651017f81cbcb6f1adde5011c7b2283babea00b4ae93ae7",
+      "0x3488f31e6449f9803f99a8b5dd232c7ad883637f1c86e6953305a2ef19c77f20",
+      "0x0e4a0c937b8934c2475613b6322b3f8edc8dedc24762e01e42b0e6f87424a089",
+      "0x32707ae194389a70f25314ec934851daba12d893da616c492ffe8b655b7759a9",
+      "0xf2ce8d3897ac5009a131637d3575f1f91c579bd08eecce6ae2b2da0f32bbe6f1"
+    ],
+    "availability": {
+      "interval": "1h",
+      "polymarket_history_latency_seconds": 60,
+      "rule": "hourly price sample: filed under its hour, known at its own sample time source_ts; available_at = source_ts + availability.polymarket_history_latency_seconds",
+      "source": "polymarket_clob_history"
+    },
+    "bootstrap_samples": 2000,
+    "calendar": null,
+    "config_version": "m2.1",
+    "context_length": 336,
+    "cutoff_delay_seconds": 300,
+    "device": "auto",
+    "domain": "polymarket",
+    "excluded_assets": [],
+    "extra_latency_seconds": 0,
+    "horizons": [
+      1,
+      6,
+      24
+    ],
+    "interval": "1h",
+    "interval_levels": [
+      0.5,
+      0.8,
+      0.9,
+      0.98
+    ],
+    "knowledge_mode": "strict_point_in_time",
+    "logit_eps": 0.0001,
+    "max_missing_context_fraction": 0.25,
+    "min_context_observations": 168,
+    "min_paired_dates": 30,
+    "models": [
+      {
+        "name": "timestral-5m",
+        "params": {
+          "clip_nonnegative": false,
+          "symmetric_averaging": true
+        }
+      },
+      {
+        "name": "timestral-28m",
+        "params": {
+          "clip_nonnegative": false,
+          "symmetric_averaging": true
+        }
+      },
+      {
+        "name": "timestral-123m",
+        "params": {
+          "clip_nonnegative": false,
+          "symmetric_averaging": true
+        }
+      },
+      {
+        "name": "timestral-209m",
+        "params": {
+          "clip_nonnegative": false,
+          "symmetric_averaging": true
+        }
+      },
+      {
+        "name": "zero",
+        "params": {
+          "max_context": 4096,
+          "n_origins": 250
+        }
+      },
+      {
+        "name": "persistence",
+        "params": {
+          "max_context": 4096,
+          "n_origins": 250
+        }
+      },
+      {
+        "name": "moving_average",
+        "params": {
+          "max_context": 4096,
+          "n_origins": 250,
+          "window": 20
+        }
+      },
+      {
+        "name": "momentum",
+        "params": {
+          "lookback": 20,
+          "max_context": 4096,
+          "n_origins": 250
+        }
+      },
+      {
+        "name": "linear_trend",
+        "params": {
+          "max_context": 4096,
+          "n_origins": 250,
+          "window": 60
+        }
+      }
+    ],
+    "name": "polymarket strict (historical cutoffs)",
+    "notes": "",
+    "origin_end": "2026-11-01T10:00:00Z",
+    "origin_start": "2025-06-01T00:00:00Z",
+    "origin_stride": 24,
+    "outcome_side": "YES",
+    "price_field": "close",
+    "quantile_levels": [
+      0.01,
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.35,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95,
+      0.99
+    ],
+    "reference_baseline": "persistence",
+    "respect_closing_time": true,
+    "seed": 0,
+    "source": "polymarket_clob_history",
+    "target": "logit_price",
+    "targets_as_of": "2026-11-03T12:00:00Z"
+  },
+  "created_at": "2026-11-03T12:08:41.430067Z",
+  "exclusions": {
+    "excluded_assets": [],
+    "failure_examples": {},
+    "forecast_failures": {},
+    "not_yet_forecast": {
+      "linear_trend": 0,
+      "momentum": 0,
+      "moving_average": 0,
+      "persistence": 0,
+      "timestral-123m": 0,
+      "timestral-209m": 0,
+      "timestral-28m": 0,
+      "timestral-5m": 0,
+      "zero": 0
+    },
+    "origins": {
+      "origin_observation_missing": 11026
+    },
+    "origins_without_all_models": 0,
+    "skipped_grid_origins": {
+      "after_market_close": 17,
+      "outside_data_span": 13350
+    },
+    "targets": {}
+  },
+  "experiment_id": "polymarket-39b8a053a14d",
+  "knowledge_mode": "strict_point_in_time",
+  "label": "STRICT POINT-IN-TIME: only data the system had actually retrieved by each cutoff.",
+  "leaderboard": [],
+  "model_runs": [],
+  "model_versions": {},
+  "n_scored_rows": 0,
+  "name": "polymarket strict (historical cutoffs)",
+  "over_time": [],
+  "per_asset": [],
+  "preparation": {
+    "assets": {
+      "0x024b68f77bfc019341ee3db8f57c103334e4b9430bba4746d8c94aafd8b36fee": {
+        "candidate_origins": 342,
+        "data_span": [
+          "2025-11-24T20:00:00Z",
+          "2026-11-03T10:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 342
+        },
+        "label": "Will Bitcoin dip to $45,000 by December 31, 2026?",
+        "meta": {
+          "category": "crypto_fees_v2",
+          "closing_time": "2027-01-01T05:00:00Z",
+          "question": "Will Bitcoin dip to $45,000 by December 31, 2026?",
+          "resolution": null,
+          "selection_reason": "selected: open, liquidity 231,853, volume 9,047,656, 344d history",
+          "status": "open",
+          "yes_token": "9894510651052373088408067031031513212801618531203062911959630395716258202132"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 177
+        }
+      },
+      "0x0b4cc3b739e1dfe5d73274740e7308b6fb389c5af040c3a174923d928d134bee": {
+        "candidate_origins": 341,
+        "data_span": [
+          "2025-11-25T19:00:00Z",
+          "2026-11-03T10:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 341
+        },
+        "label": "Will Jesus Christ return before 2027?",
+        "meta": {
+          "category": "general_fees",
+          "closing_time": "2027-01-01T04:59:00Z",
+          "question": "Will Jesus Christ return before 2027?",
+          "resolution": null,
+          "selection_reason": "selected: open, liquidity 442,856, volume 66,891,466, 343d history",
+          "status": "open",
+          "yes_token": "69324317355037271422943965141382095011871956039434394956830818206664869608517"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 178
+        }
+      },
+      "0x0e4a0c937b8934c2475613b6322b3f8edc8dedc24762e01e42b0e6f87424a089": {
+        "candidate_origins": 52,
+        "data_span": [
+          "2026-04-08T19:00:00Z",
+          "2026-06-01T12:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 52
+        },
+        "label": "US x Iran permanent peace deal by May 31, 2026?",
+        "meta": {
+          "category": null,
+          "closing_time": "2026-05-31T00:00:00Z",
+          "question": "US x Iran permanent peace deal by May 31, 2026?",
+          "resolution": {
+            "outcome": "NO",
+            "resolved_at": "2026-06-01T12:17:00Z",
+            "source": "gamma+data_v2_resolutions"
+          },
+          "selection_reason": "selected: resolved NO, volume 87,888,981, 54d history",
+          "status": "resolved",
+          "yes_token": "72094069823942324362885404801938332659316240217382754851102758232469673300092"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 2,
+          "outside_data_span": 465
+        }
+      },
+      "0x2745c38ff0617cb345c1d2df19b4f74ea777508e07411e88eeb6ab3affcda2a2": {
+        "candidate_origins": 342,
+        "data_span": [
+          "2025-11-24T20:00:00Z",
+          "2026-11-03T10:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 342
+        },
+        "label": "Will Bitcoin dip to $35,000 by December 31, 2026?",
+        "meta": {
+          "category": "crypto_fees_v2",
+          "closing_time": "2027-01-01T05:00:00Z",
+          "question": "Will Bitcoin dip to $35,000 by December 31, 2026?",
+          "resolution": null,
+          "selection_reason": "selected: open, liquidity 115,972, volume 3,733,087, 344d history",
+          "status": "open",
+          "yes_token": "19830138103155427354579425893303398904208550475895360582465715721785944321950"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 177
+        }
+      },
+      "0x32707ae194389a70f25314ec934851daba12d893da616c492ffe8b655b7759a9": {
+        "candidate_origins": 27,
+        "data_span": [
+          "2025-12-03T21:00:00Z",
+          "2026-01-01T23:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 27
+        },
+        "label": "Will Eleven die in \"Stranger Things: Season 5\"?",
+        "meta": {
+          "category": null,
+          "closing_time": "2025-12-31T00:00:00Z",
+          "question": "Will Eleven die in \"Stranger Things: Season 5\"?",
+          "resolution": {
+            "outcome": "NO",
+            "resolved_at": "2026-01-05T00:43:49Z",
+            "source": "gamma+data_v2_resolutions"
+          },
+          "selection_reason": "selected: resolved NO, volume 80,824,835, 32d history",
+          "status": "resolved",
+          "yes_token": "68403617023928319391393106546921684553483543294700440401405462140878184745736"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 2,
+          "outside_data_span": 490
+        }
+      },
+      "0x32e869cb0f7316273417ec79aa94c8a139f8c390ebff8a24150a18753d257f8e": {
+        "candidate_origins": 181,
+        "data_span": [
+          "2026-05-04T14:00:00Z",
+          "2026-11-03T10:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 181
+        },
+        "label": "Will GameStop acquire eBay?",
+        "meta": {
+          "category": "economics_fees",
+          "closing_time": "2027-01-01T04:59:00Z",
+          "question": "Will GameStop acquire eBay?",
+          "resolution": null,
+          "selection_reason": "selected: open, liquidity 45,104, volume 3,347,543, 183d history",
+          "status": "open",
+          "yes_token": "22738604660557321780761578420118016749027563268201595763789441772230090847247"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 338
+        }
+      },
+      "0x3488f31e6449f9803f99a8b5dd232c7ad883637f1c86e6953305a2ef19c77f20": {
+        "candidate_origins": 11,
+        "data_span": [
+          "2026-01-19T21:00:00Z",
+          "2026-02-01T23:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 11
+        },
+        "label": "US strikes Iran by February 28, 2026?",
+        "meta": {
+          "category": null,
+          "closing_time": "2026-01-31T00:00:00Z",
+          "question": "US strikes Iran by February 28, 2026?",
+          "resolution": {
+            "outcome": "YES",
+            "resolved_at": "2026-02-28T09:31:17Z",
+            "source": "gamma+data_v2_resolutions"
+          },
+          "selection_reason": "selected: resolved YES, volume 89,652,867, 40d history",
+          "status": "resolved",
+          "yes_token": "110790003121442365126855864076707686014650523258783405996925622264696084778807"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 2,
+          "outside_data_span": 506
+        }
+      },
+      "0x3733a1b647e7364095736ab0966465d896a84cf3b6bc1695ca1f26c3239b3868": {
+        "candidate_origins": 29,
+        "data_span": [
+          "2026-05-06T01:00:00Z",
+          "2026-06-04T00:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 29
+        },
+        "label": "MicroStrategy sells any Bitcoin by May 31, 2026?",
+        "meta": {
+          "category": "finance_prices_fees",
+          "closing_time": "2026-07-01T04:00:00Z",
+          "question": "MicroStrategy sells any Bitcoin by May 31, 2026?",
+          "resolution": {
+            "outcome": "NO",
+            "resolved_at": "2026-06-04T00:34:19Z",
+            "source": "gamma+data_v2_resolutions"
+          },
+          "selection_reason": "selected: resolved NO, volume 375,813,105, 29d history",
+          "status": "resolved",
+          "yes_token": "25714007960293389110960044475283546872601238755063051359394740854408462452120"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 490
+        }
+      },
+      "0x377e7fe65cf198a7fc4fdae3f2136b74729279267858daaf96718b23bc2a5607": {
+        "candidate_origins": 237,
+        "data_span": [
+          "2026-03-09T04:00:00Z",
+          "2026-11-03T10:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 237
+        },
+        "label": "Iran leadership change by December 31?",
+        "meta": {
+          "category": null,
+          "closing_time": "2027-01-01T04:59:00Z",
+          "question": "Iran leadership change by December 31?",
+          "resolution": null,
+          "selection_reason": "selected: open, liquidity 131,568, volume 5,742,923, 239d history",
+          "status": "open",
+          "yes_token": "18652479948917565296149340091675894865339012333173025944893512396354173886674"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 282
+        }
+      },
+      "0x3b0107a80edd066fe987784d7ab5963c177888433efbec10689951c17320606c": {
+        "candidate_origins": 296,
+        "data_span": [
+          "2026-01-09T19:00:00Z",
+          "2026-11-03T10:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 296
+        },
+        "label": "Will Satoshi move any Bitcoin in 2026?",
+        "meta": {
+          "category": "crypto_fees_v2",
+          "closing_time": "2027-01-01T05:00:00Z",
+          "question": "Will Satoshi move any Bitcoin in 2026?",
+          "resolution": null,
+          "selection_reason": "selected: open, liquidity 84,656, volume 5,420,455, 298d history",
+          "status": "open",
+          "yes_token": "112007327373263623178671509828927834172092799802464528122988153704237637965568"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 223
+        }
+      },
+      "0x3de0f3d7d7efb40cde68e814d40a0b232832083653c8e78260eb999baa967de0": {
+        "candidate_origins": 301,
+        "data_span": [
+          "2026-01-04T21:00:00Z",
+          "2026-11-03T10:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 301
+        },
+        "label": "US strike on Cuba by December 31?",
+        "meta": {
+          "category": null,
+          "closing_time": "2027-01-01T04:59:00Z",
+          "question": "US strike on Cuba by December 31?",
+          "resolution": null,
+          "selection_reason": "selected: open, liquidity 42,469, volume 5,501,281, 303d history",
+          "status": "open",
+          "yes_token": "91347242536105459969213788769929618447748782724898414007495579710952664644740"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 218
+        }
+      },
+      "0x405b56fc75f56d7635a94df9836d6cb6f9b9571d1fd33eb165c1e59d1d11801f": {
+        "candidate_origins": 82,
+        "data_span": [
+          "2026-08-11T10:00:00Z",
+          "2026-11-03T10:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 82
+        },
+        "label": "Strait of Hormuz traffic returns to normal by October 31?",
+        "meta": {
+          "category": null,
+          "closing_time": "2026-11-01T03:59:00Z",
+          "question": "Strait of Hormuz traffic returns to normal by October 31?",
+          "resolution": null,
+          "selection_reason": "selected: open, liquidity 383,417, volume 4,506,695, 82d history",
+          "status": "open",
+          "yes_token": "65318042793305154928481822061228422214615698483328483747495637152414701080541"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 437
+        }
+      },
+      "0x43ec78527bd98a0588dd9455685b2cc82f5743140cb3a154603dc03c02b57de5": {
+        "candidate_origins": 78,
+        "data_span": [
+          "2025-11-13T16:00:00Z",
+          "2026-02-01T23:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 78
+        },
+        "label": "US government shutdown Saturday?",
+        "meta": {
+          "category": null,
+          "closing_time": "2026-01-31T00:00:00Z",
+          "question": "US government shutdown Saturday?",
+          "resolution": {
+            "outcome": "YES",
+            "resolved_at": "2026-02-04T00:35:28Z",
+            "source": "gamma+data_v2_resolutions"
+          },
+          "selection_reason": "selected: resolved YES, volume 157,296,576, 82d history",
+          "status": "resolved",
+          "yes_token": "52607315900507156846622820770453728082833251091510131025984187712529448877245"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 2,
+          "outside_data_span": 439
+        }
+      },
+      "0x46ca741da4abd7ffa993f59ac65bfe83de43ae027accac71d263a493e44064e7": {
+        "candidate_origins": 97,
+        "data_span": [
+          "2026-07-27T18:00:00Z",
+          "2026-11-03T10:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 97
+        },
+        "label": "US announces end of Iranian blockade by December 31, 2026?",
+        "meta": {
+          "category": null,
+          "closing_time": "2027-01-01T04:59:00Z",
+          "question": "US announces end of Iranian blockade by December 31, 2026?",
+          "resolution": null,
+          "selection_reason": "selected: open, liquidity 147,749, volume 5,000,975, 99d history",
+          "status": "open",
+          "yes_token": "86011229287950365043519117852041614651767455889324682112682327985496937935368"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 422
+        }
+      },
+      "0x48b0b0bca515f68fccf95af4793dbd0edbfec1f8ec6e8df2c0f69ba74f8c4722": {
+        "candidate_origins": 361,
+        "data_span": [
+          "2025-11-05T23:00:00Z",
+          "2026-11-03T10:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 361
+        },
+        "label": "Trump out as President before 2027?",
+        "meta": {
+          "category": null,
+          "closing_time": "2027-01-01T04:59:00Z",
+          "question": "Trump out as President before 2027?",
+          "resolution": null,
+          "selection_reason": "selected: open, liquidity 229,216, volume 13,603,945, 363d history",
+          "status": "open",
+          "yes_token": "59252515735652674747158950210016502214756531287333895140318848923768750410355"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 158
+        }
+      },
+      "0x4c5701bcde0b8fb7d7f48c8e9d20245a6caa58c61a77f981fad98f2bfa0b1bc7": {
+        "candidate_origins": 13,
+        "data_span": [
+          "2026-03-24T19:00:00Z",
+          "2026-04-08T23:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 13
+        },
+        "label": "US x Iran ceasefire by April 7?",
+        "meta": {
+          "category": null,
+          "closing_time": "2026-04-07T00:00:00Z",
+          "question": "US x Iran ceasefire by April 7?",
+          "resolution": {
+            "outcome": "YES",
+            "resolved_at": "2026-04-11T00:28:39Z",
+            "source": "gamma+data_v2_resolutions"
+          },
+          "selection_reason": "selected: resolved YES, volume 173,696,184, 17d history",
+          "status": "resolved",
+          "yes_token": "82855088893985825781350466813737280564000275725006328179621744619327480699369"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 2,
+          "outside_data_span": 504
+        }
+      },
+      "0x4c80df6f557bb0b9de08c0301ebdce500dd9bdc58400d9269fb8fab1709ed584": {
+        "candidate_origins": 353,
+        "data_span": [
+          "2025-11-14T00:00:00Z",
+          "2026-11-03T10:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 353
+        },
+        "label": "China x Taiwan military clash before 2027?",
+        "meta": {
+          "category": null,
+          "closing_time": "2027-01-01T04:59:00Z",
+          "question": "China x Taiwan military clash before 2027?",
+          "resolution": null,
+          "selection_reason": "selected: open, liquidity 87,754, volume 3,504,429, 355d history",
+          "status": "open",
+          "yes_token": "104812032440315568595318241870590180481232715981192720184511444933968102038477"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 166
+        }
+      },
+      "0x51f624dbbf14f9edb575fef1be6f7a303751de70783fa144fce27b957452c803": {
+        "candidate_origins": 465,
+        "data_span": [
+          "2025-07-25T00:00:00Z",
+          "2026-11-03T10:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 465
+        },
+        "label": "Zelenskyy out as Ukraine president by end of 2026?",
+        "meta": {
+          "category": null,
+          "closing_time": "2027-01-01T04:59:00Z",
+          "question": "Zelenskyy out as Ukraine president by end of 2026?",
+          "resolution": null,
+          "selection_reason": "selected: open, liquidity 74,682, volume 3,774,655, 466d history",
+          "status": "open",
+          "yes_token": "108187737663325442737199857734058032845728149267925579081973309839049299838520"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 54
+        }
+      },
+      "0x5c79dfde05559b79a9cb9f7c4187e4d49632dd042572ae676952f812732591cc": {
+        "candidate_origins": 174,
+        "data_span": [
+          "2026-05-11T14:00:00Z",
+          "2026-11-03T10:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 174
+        },
+        "label": "Strait of Hormuz traffic returns to normal by December 31?",
+        "meta": {
+          "category": null,
+          "closing_time": "2027-01-01T04:59:00Z",
+          "question": "Strait of Hormuz traffic returns to normal by December 31?",
+          "resolution": null,
+          "selection_reason": "selected: open, liquidity 283,152, volume 16,260,123, 176d history",
+          "status": "open",
+          "yes_token": "83783489454659420807679723574840032660002326710045123865554753994450797728825"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 345
+        }
+      },
+      "0x5db999fad322cea2914535aae5517060c3f80ad6d8c0231cde2124a434d16846": {
+        "candidate_origins": 361,
+        "data_span": [
+          "2025-11-05T19:00:00Z",
+          "2026-11-03T10:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 361
+        },
+        "label": "Will the U.S. invade Iran before 2027?",
+        "meta": {
+          "category": null,
+          "closing_time": "2027-01-01T04:59:00Z",
+          "question": "Will the U.S. invade Iran before 2027?",
+          "resolution": null,
+          "selection_reason": "selected: open, liquidity 275,044, volume 76,724,778, 363d history",
+          "status": "open",
+          "yes_token": "55115078421062885512539156303747803058407616201213034911037320915726138659123"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 158
+        }
+      },
+      "0x6bd56627aa21311850825edb27e53434a0e17a4f782be0086bc07f71eee00d0d": {
+        "candidate_origins": 483,
+        "data_span": [
+          "2025-07-06T23:00:00Z",
+          "2026-11-03T10:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 483
+        },
+        "label": "Putin out as President of Russia by December 31, 2026?",
+        "meta": {
+          "category": null,
+          "closing_time": "2027-01-01T04:59:00Z",
+          "question": "Putin out as President of Russia by December 31, 2026?",
+          "resolution": null,
+          "selection_reason": "selected: open, liquidity 457,348, volume 27,201,326, 485d history",
+          "status": "open",
+          "yes_token": "350977769852917329387037893294763093471844346281449484439085576212613048126"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 36
+        }
+      },
+      "0x6d0e09d0f04572d9b1adad84703458b0297bc5603b69dccbde93147ee4443246": {
+        "candidate_origins": 22,
+        "data_span": [
+          "2026-03-18T17:00:00Z",
+          "2026-04-09T00:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 22
+        },
+        "label": "US forces enter Iran by April 30?",
+        "meta": {
+          "category": null,
+          "closing_time": "2026-04-30T00:00:00Z",
+          "question": "US forces enter Iran by April 30?",
+          "resolution": {
+            "outcome": "YES",
+            "resolved_at": "2026-04-09T00:28:21Z",
+            "source": "gamma+data_v2_resolutions"
+          },
+          "selection_reason": "selected: resolved YES, volume 269,049,107, 21d history",
+          "status": "resolved",
+          "yes_token": "2916184120206223749839849644877707470354946028257066951797428049170871002238"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 497
+        }
+      },
+      "0x6fefc0438c7598b23531457c8c60541990d0786bd4bd9dfc3eabc8d95c291092": {
+        "candidate_origins": 307,
+        "data_span": [
+          "2025-12-29T16:00:00Z",
+          "2026-11-03T10:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 307
+        },
+        "label": "Will Bitcoin reach $250,000 by December 31, 2026?",
+        "meta": {
+          "category": "crypto_fees_v2",
+          "closing_time": "2027-01-01T05:00:00Z",
+          "question": "Will Bitcoin reach $250,000 by December 31, 2026?",
+          "resolution": null,
+          "selection_reason": "selected: open, liquidity 266,946, volume 5,671,176, 309d history",
+          "status": "open",
+          "yes_token": "13433573766910980267981622064090484781359464703732825845886677588040916221533"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 212
+        }
+      },
+      "0x747dc809fb79e1b05be09c42d6179459a58de2ef3e40f02484a4e1260f741f75": {
+        "candidate_origins": 341,
+        "data_span": [
+          "2025-11-25T19:00:00Z",
+          "2026-11-03T10:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 341
+        },
+        "label": "Will the US confirm that aliens exist before 2027?",
+        "meta": {
+          "category": "politics_fees",
+          "closing_time": "2027-01-01T04:59:00Z",
+          "question": "Will the US confirm that aliens exist before 2027?",
+          "resolution": null,
+          "selection_reason": "selected: open, liquidity 841,442, volume 43,443,038, 343d history",
+          "status": "open",
+          "yes_token": "107505882767731489358349912513945399560393482969656700824895970500493757150417"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 178
+        }
+      },
+      "0x752fa61c93f16c4b15e85b0bd438d9c684176b0ea7b319a84c8aca34616e8a8c": {
+        "candidate_origins": 342,
+        "data_span": [
+          "2025-11-24T20:00:00Z",
+          "2026-11-03T10:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 342
+        },
+        "label": "Will Bitcoin dip to $55,000 by December 31, 2026?",
+        "meta": {
+          "category": "crypto_fees_v2",
+          "closing_time": "2027-01-01T05:00:00Z",
+          "question": "Will Bitcoin dip to $55,000 by December 31, 2026?",
+          "resolution": null,
+          "selection_reason": "selected: open, liquidity 170,805, volume 7,230,228, 344d history",
+          "status": "open",
+          "yes_token": "115462087336983275104521488923966022755348986822352694745153736621832003960847"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 177
+        }
+      },
+      "0x79b7408f02df2eba4034ca4c06ddf17b8dbeacc5adbe8595969e7573912c4e3b": {
+        "candidate_origins": 128,
+        "data_span": [
+          "2026-06-26T20:00:00Z",
+          "2026-11-03T10:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 128
+        },
+        "label": "US-Iran Final Nuclear Deal by December 31, 2026?",
+        "meta": {
+          "category": null,
+          "closing_time": "2027-01-01T04:59:00Z",
+          "question": "US-Iran Final Nuclear Deal by December 31, 2026?",
+          "resolution": null,
+          "selection_reason": "selected: open, liquidity 145,297, volume 3,803,819, 130d history",
+          "status": "open",
+          "yes_token": "31155599200443620024532103683912072563894181253510224263086924270624693692711"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 391
+        }
+      },
+      "0x7cb525e831729325d651017f81cbcb6f1adde5011c7b2283babea00b4ae93ae7": {
+        "candidate_origins": 30,
+        "data_span": [
+          "2026-03-02T19:00:00Z",
+          "2026-04-03T03:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 30
+        },
+        "label": "Netanyahu out by March 31?",
+        "meta": {
+          "category": null,
+          "closing_time": "2026-04-01T03:59:00Z",
+          "question": "Netanyahu out by March 31?",
+          "resolution": {
+            "outcome": "NO",
+            "resolved_at": "2026-04-05T06:13:09Z",
+            "source": "gamma+data_v2_resolutions"
+          },
+          "selection_reason": "selected: resolved NO, volume 104,205,875, 34d history",
+          "status": "resolved",
+          "yes_token": "68651215661669695672235506829747686724194100790999648420763714425224567728520"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 2,
+          "outside_data_span": 487
+        }
+      },
+      "0x80ebf0a88a44bf737d4047b3accd7108285c69b84257e5c684bdc4c715c81139": {
+        "candidate_origins": 301,
+        "data_span": [
+          "2026-01-04T21:00:00Z",
+          "2026-11-03T10:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 301
+        },
+        "label": "Will the U.S. invade Cuba in 2026?",
+        "meta": {
+          "category": null,
+          "closing_time": "2027-01-01T04:59:00Z",
+          "question": "Will the U.S. invade Cuba in 2026?",
+          "resolution": null,
+          "selection_reason": "selected: open, liquidity 83,802, volume 3,696,380, 303d history",
+          "status": "open",
+          "yes_token": "1291454874125024564913411658636854434792972068510027777552181749936579562639"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 218
+        }
+      },
+      "0x890fc3ba40458db0b67560691aa1597344c2a0560d18e80f586a4b35f510b4ce": {
+        "candidate_origins": 298,
+        "data_span": [
+          "2026-01-07T05:00:00Z",
+          "2026-11-03T10:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 298
+        },
+        "label": "Will the US acquire part of Greenland in 2026?",
+        "meta": {
+          "category": null,
+          "closing_time": "2027-01-01T04:59:00Z",
+          "question": "Will the US acquire part of Greenland in 2026?",
+          "resolution": null,
+          "selection_reason": "selected: open, liquidity 60,413, volume 11,021,944, 300d history",
+          "status": "open",
+          "yes_token": "60745476350338574489643206785963608049827415658137795738920858026399504782388"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 221
+        }
+      },
+      "0x9345d5142a67f5541264c96515496affee02580f1c572680759eac9fd2a1588a": {
+        "candidate_origins": 373,
+        "data_span": [
+          "2025-10-24T21:00:00Z",
+          "2026-11-03T10:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 373
+        },
+        "label": "Billionaire one-time wealth tax passes in California election 2026?",
+        "meta": {
+          "category": "politics_fees",
+          "closing_time": "2026-11-04T04:59:00Z",
+          "question": "Billionaire one-time wealth tax passes in California election 2026?",
+          "resolution": null,
+          "selection_reason": "selected: open, liquidity 218,908, volume 4,633,404, 375d history",
+          "status": "open",
+          "yes_token": "38487155026041533062980821872238023790862908049855818921747904019478875496931"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 146
+        }
+      },
+      "0x9cb23d04b2ded06147482076688b69b487a8d982c63ebdda2ab3678cf27cf390": {
+        "candidate_origins": 294,
+        "data_span": [
+          "2026-01-12T00:00:00Z",
+          "2026-11-03T10:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 294
+        },
+        "label": "Clarity Act (H.R.3633) signed into law in 2026?",
+        "meta": {
+          "category": "politics_fees",
+          "closing_time": "2027-01-01T05:00:00Z",
+          "question": "Clarity Act (H.R.3633) signed into law in 2026?",
+          "resolution": null,
+          "selection_reason": "selected: open, liquidity 130,535, volume 24,792,217, 296d history",
+          "status": "open",
+          "yes_token": "35198549486569600595408965368290795524428922595732253580266052028158040373233"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 225
+        }
+      },
+      "0xa467b14d51f01b957109d9cbb1d6c124fab2a089d52ed8f471d23c2812e743b7": {
+        "candidate_origins": 486,
+        "data_span": [
+          "2025-07-03T21:00:00Z",
+          "2026-11-03T10:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 486
+        },
+        "label": "Xi Jinping out before 2027?",
+        "meta": {
+          "category": "politics_fees",
+          "closing_time": "2027-01-01T04:59:00Z",
+          "question": "Xi Jinping out before 2027?",
+          "resolution": null,
+          "selection_reason": "selected: open, liquidity 292,428, volume 16,839,769, 488d history",
+          "status": "open",
+          "yes_token": "32338220190071351435772801779725302244575775216413325951443816017994629993401"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 33
+        }
+      },
+      "0xa4ddc18895cc7b14810283ef8f113939abffd3969c6a0e37f1897110c67e6f73": {
+        "candidate_origins": 181,
+        "data_span": [
+          "2026-05-04T15:00:00Z",
+          "2026-11-03T10:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 181
+        },
+        "label": "Hantavirus pandemic in 2026?",
+        "meta": {
+          "category": "weather_fees",
+          "closing_time": "2027-01-01T04:59:00Z",
+          "question": "Hantavirus pandemic in 2026?",
+          "resolution": null,
+          "selection_reason": "selected: open, liquidity 92,886, volume 18,914,702, 183d history",
+          "status": "open",
+          "yes_token": "51508280778202349361616850684455231843716212176724253736363122559269229712002"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 338
+        }
+      },
+      "0xa885bfe10688056a9d0f4e9a1523bfa18f66fda065f0400d714ba54776083713": {
+        "candidate_origins": 307,
+        "data_span": [
+          "2025-12-29T16:00:00Z",
+          "2026-11-03T10:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 307
+        },
+        "label": "Will Bitcoin dip to $15,000 by December 31, 2026?",
+        "meta": {
+          "category": "crypto_fees_v2",
+          "closing_time": "2027-01-01T05:00:00Z",
+          "question": "Will Bitcoin dip to $15,000 by December 31, 2026?",
+          "resolution": null,
+          "selection_reason": "selected: open, liquidity 107,050, volume 5,096,703, 309d history",
+          "status": "open",
+          "yes_token": "63985397218239656926367525871649971575041102854345777114360978052613472299768"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 212
+        }
+      },
+      "0xa93b28a6384aefff4e7d5adb2061c444e4a0e95b8ad17755f9cee123c7099b35": {
+        "candidate_origins": 39,
+        "data_span": [
+          "2026-03-31T21:00:00Z",
+          "2026-05-09T19:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 39
+        },
+        "label": "Russia x Ukraine ceasefire by May 31, 2026?",
+        "meta": {
+          "category": null,
+          "closing_time": "2026-05-31T00:00:00Z",
+          "question": "Russia x Ukraine ceasefire by May 31, 2026?",
+          "resolution": {
+            "outcome": "YES",
+            "resolved_at": "2026-05-09T01:04:01Z",
+            "source": "gamma+data_v2_resolutions"
+          },
+          "selection_reason": "selected: resolved YES, volume 141,250,713, 39d history",
+          "status": "resolved",
+          "yes_token": "79574854225464477884287524461980167393583915155475895540399834902850789709576"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 480
+        }
+      },
+      "0xaa5cdb6830cbfa2ca711b7cf93bd42cf4f8e062d44ea188c0b8ec1fb2924c083": {
+        "candidate_origins": 245,
+        "data_span": [
+          "2026-03-01T04:00:00Z",
+          "2026-11-03T10:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 245
+        },
+        "label": "Will Reza Pahlavi lead Iran in 2026?",
+        "meta": {
+          "category": null,
+          "closing_time": "2027-01-01T04:59:00Z",
+          "question": "Will Reza Pahlavi lead Iran in 2026?",
+          "resolution": null,
+          "selection_reason": "selected: open, liquidity 77,614, volume 11,851,509, 247d history",
+          "status": "open",
+          "yes_token": "104932610032177696635191871147557737718087870958469629338467406422339967452218"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 274
+        }
+      },
+      "0xbb4d51e6364066d92eb6f9b8413dd7193de70966736044463b205834805a1f3b": {
+        "candidate_origins": 362,
+        "data_span": [
+          "2025-11-04T01:00:00Z",
+          "2026-11-03T10:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 362
+        },
+        "label": "Will the Iranian regime fall before 2027?",
+        "meta": {
+          "category": null,
+          "closing_time": "2027-01-01T04:59:00Z",
+          "question": "Will the Iranian regime fall before 2027?",
+          "resolution": null,
+          "selection_reason": "selected: open, liquidity 448,253, volume 29,051,121, 364d history",
+          "status": "open",
+          "yes_token": "10991849228756847439673778874175365458450913336396982752046655649803657501964"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 157
+        }
+      },
+      "0xbe9d61d80c767264a0adc8a16453fbcaf0413e673e665cc7c14701691143fac0": {
+        "candidate_origins": 158,
+        "data_span": [
+          "2026-05-27T23:00:00Z",
+          "2026-11-03T10:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 158
+        },
+        "label": "Will Ukraine recapture Crimean territory by December 31, 2026?",
+        "meta": {
+          "category": null,
+          "closing_time": "2027-01-01T04:59:00Z",
+          "question": "Will Ukraine recapture Crimean territory by December 31, 2026?",
+          "resolution": null,
+          "selection_reason": "selected: open, liquidity 117,090, volume 3,546,240, 160d history",
+          "status": "open",
+          "yes_token": "67011482977279466154940850972585572311207926803952896052113224614375102184687"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 361
+        }
+      },
+      "0xce3c54c3e773e8b3bf73e4c12af93205b21195d03b9c386e22f274b9acfc2c56": {
+        "candidate_origins": 269,
+        "data_span": [
+          "2026-02-05T16:00:00Z",
+          "2026-11-03T10:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 269
+        },
+        "label": "Will Bitcoin dip to $50,000 by December 31, 2026?",
+        "meta": {
+          "category": "crypto_fees_v2",
+          "closing_time": "2027-01-01T05:00:00Z",
+          "question": "Will Bitcoin dip to $50,000 by December 31, 2026?",
+          "resolution": null,
+          "selection_reason": "selected: open, liquidity 130,767, volume 5,285,182, 271d history",
+          "status": "open",
+          "yes_token": "13887983551129862992605123088744175927084435631400400451585519366058907542147"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 250
+        }
+      },
+      "0xd4bbf7f6707c67beb736135ad32a41f6db41f8ae52d3ac4919650de9eeb94ed8": {
+        "candidate_origins": 44,
+        "data_span": [
+          "2026-01-14T02:00:00Z",
+          "2026-03-01T23:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 44
+        },
+        "label": "Khamenei out as Supreme Leader of Iran by February 28?",
+        "meta": {
+          "category": null,
+          "closing_time": "2026-02-28T00:00:00Z",
+          "question": "Khamenei out as Supreme Leader of Iran by February 28?",
+          "resolution": {
+            "outcome": "YES",
+            "resolved_at": "2026-03-04T01:05:25Z",
+            "source": "gamma+data_v2_resolutions"
+          },
+          "selection_reason": "selected: resolved YES, volume 131,114,971, 49d history",
+          "status": "resolved",
+          "yes_token": "39317885422026394259056328144566743331998444273202427934141325790266108570112"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 2,
+          "outside_data_span": 473
+        }
+      },
+      "0xd595eb9b81885ff018738300c79047e3ec89e87294424f57a29a7fa9162bf116": {
+        "candidate_origins": 313,
+        "data_span": [
+          "2025-12-23T02:00:00Z",
+          "2026-11-03T10:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 313
+        },
+        "label": "Will Trump acquire Greenland before 2027?",
+        "meta": {
+          "category": null,
+          "closing_time": "2027-01-01T04:59:00Z",
+          "question": "Will Trump acquire Greenland before 2027?",
+          "resolution": null,
+          "selection_reason": "selected: open, liquidity 162,004, volume 35,941,959, 315d history",
+          "status": "open",
+          "yes_token": "5161623255678193352839985156330393796378434470119114669671615782853260939535"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 206
+        }
+      },
+      "0xd86a816093fcd0a0e1ca440bc5ce199bd3c5a8d6139e044b076958164f8c5423": {
+        "candidate_origins": 30,
+        "data_span": [
+          "2026-05-15T21:00:00Z",
+          "2026-06-16T23:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 30
+        },
+        "label": "US x Iran permanent peace deal by June 15, 2026?",
+        "meta": {
+          "category": null,
+          "closing_time": "2026-06-15T00:00:00Z",
+          "question": "US x Iran permanent peace deal by June 15, 2026?",
+          "resolution": {
+            "outcome": "YES",
+            "resolved_at": "2026-06-18T00:31:59Z",
+            "source": "gamma+data_v2_resolutions"
+          },
+          "selection_reason": "selected: resolved YES, volume 177,370,818, 33d history",
+          "status": "resolved",
+          "yes_token": "5904694069529905826680225678119990013628860098514322777023141327768111791078"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 2,
+          "outside_data_span": 487
+        }
+      },
+      "0xd9fb1184af0064e5e34b129f5b79afa5a17b7e32f2953ab05efed82315fee6d4": {
+        "candidate_origins": 465,
+        "data_span": [
+          "2025-07-25T00:00:00Z",
+          "2026-11-03T10:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 465
+        },
+        "label": "Will China invade Taiwan by end of 2026?",
+        "meta": {
+          "category": null,
+          "closing_time": "2027-01-01T04:59:00Z",
+          "question": "Will China invade Taiwan by end of 2026?",
+          "resolution": null,
+          "selection_reason": "selected: open, liquidity 341,844, volume 45,563,175, 466d history",
+          "status": "open",
+          "yes_token": "94559586571241563470235664821564670251180951772614764383113614156422396181162"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 54
+        }
+      },
+      "0xdaa4866bae18be58c5a79d2aeeffd035ec78f1bb49dbd88f72993997778a990f": {
+        "candidate_origins": 342,
+        "data_span": [
+          "2025-11-24T20:00:00Z",
+          "2026-11-03T10:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 342
+        },
+        "label": "Will Bitcoin reach $100,000 by December 31, 2026?",
+        "meta": {
+          "category": "crypto_fees_v2",
+          "closing_time": "2027-01-01T05:00:00Z",
+          "question": "Will Bitcoin reach $100,000 by December 31, 2026?",
+          "resolution": null,
+          "selection_reason": "selected: open, liquidity 109,822, volume 4,067,146, 344d history",
+          "status": "open",
+          "yes_token": "56078938060096976448086754249497300447360333783952000147427828224794011030104"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 177
+        }
+      },
+      "0xe6d5e5da83874cd82c9b651a8a5d4fc541a800a295fb62e85124b4f5a04a4b7d": {
+        "candidate_origins": 229,
+        "data_span": [
+          "2026-03-18T00:00:00Z",
+          "2026-11-03T10:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 229
+        },
+        "label": "Will China invade Taiwan by December 31, 2027?",
+        "meta": {
+          "category": null,
+          "closing_time": "2028-01-01T04:59:00Z",
+          "question": "Will China invade Taiwan by December 31, 2027?",
+          "resolution": null,
+          "selection_reason": "selected: open, liquidity 190,507, volume 3,580,903, 231d history",
+          "status": "open",
+          "yes_token": "99308764485765552888542373236405354280486342174935314281037215048612491168324"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 290
+        }
+      },
+      "0xf2bf04609e7458df56c9bb4b1e051286dea11da1c944bbc1dafbcc6b76904e52": {
+        "candidate_origins": 292,
+        "data_span": [
+          "2026-01-13T20:00:00Z",
+          "2026-11-03T10:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 292
+        },
+        "label": "NATO x Russia military clash by December 31, 2026?",
+        "meta": {
+          "category": null,
+          "closing_time": "2027-01-01T04:59:00Z",
+          "question": "NATO x Russia military clash by December 31, 2026?",
+          "resolution": null,
+          "selection_reason": "selected: open, liquidity 56,935, volume 3,589,886, 294d history",
+          "status": "open",
+          "yes_token": "105031123790227090351610621121319179238510007553875150023320472711583933704999"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 0,
+          "outside_data_span": 227
+        }
+      },
+      "0xf2ce8d3897ac5009a131637d3575f1f91c579bd08eecce6ae2b2da0f32bbe6f1": {
+        "candidate_origins": 202,
+        "data_span": [
+          "2025-06-12T20:00:00Z",
+          "2026-01-01T08:00:00Z"
+        ],
+        "excluded_origins": {
+          "origin_observation_missing": 202
+        },
+        "label": "Xi Jinping out in 2025?",
+        "meta": {
+          "category": null,
+          "closing_time": "2025-12-31T23:55:00Z",
+          "question": "Xi Jinping out in 2025?",
+          "resolution": {
+            "outcome": "NO",
+            "resolved_at": "2026-01-01T08:18:43Z",
+            "source": "gamma+data_v2_resolutions"
+          },
+          "selection_reason": "selected: resolved NO, volume 78,655,912, 203d history",
+          "status": "resolved",
+          "yes_token": "114304586861386186441621124384163963092522056897081085884483958561365015034812"
+        },
+        "ok_origins": 0,
+        "skipped": {
+          "after_market_close": 1,
+          "outside_data_span": 316
+        }
+      }
+    },
+    "excluded_assets": []
+  },
+  "resolution": {
+    "applicable": false
+  },
+  "status": "completed"
+}

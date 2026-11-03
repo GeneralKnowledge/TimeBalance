@@ -1,0 +1,150 @@
+{
+  "assets": [
+    "SPY",
+    "QQQ",
+    "IWM",
+    "GLD",
+    "TLT",
+    "NVDA",
+    "MSFT",
+    "AAPL",
+    "AMZN",
+    "^VIX"
+  ],
+  "availability": {
+    "interval": "1d",
+    "rule": "daily bar: timestamp is the session close (XNYS calendar; 00:00 Europe/London for FX); available_at = close + availability.stock_close_delay_minutes / fx_close_delay_minutes",
+    "source": "yfinance",
+    "stock_close_delay_minutes": 30
+  },
+  "bootstrap_samples": 2000,
+  "calendar": "XNYS",
+  "config_version": "m2.1",
+  "context_length": 512,
+  "cutoff_delay_seconds": 1800,
+  "device": "auto",
+  "domain": "stocks",
+  "excluded_assets": [],
+  "extra_latency_seconds": 0,
+  "horizons": [
+    1,
+    5,
+    20
+  ],
+  "interval": "1d",
+  "interval_levels": [
+    0.5,
+    0.8,
+    0.9,
+    0.98
+  ],
+  "knowledge_mode": "reconstructed_history",
+  "logit_eps": null,
+  "max_missing_context_fraction": 0.05,
+  "min_context_observations": 480,
+  "min_paired_dates": 30,
+  "models": [
+    {
+      "name": "timestral-5m",
+      "params": {
+        "clip_nonnegative": false,
+        "symmetric_averaging": true
+      }
+    },
+    {
+      "name": "timestral-28m",
+      "params": {
+        "clip_nonnegative": false,
+        "symmetric_averaging": true
+      }
+    },
+    {
+      "name": "timestral-123m",
+      "params": {
+        "clip_nonnegative": false,
+        "symmetric_averaging": true
+      }
+    },
+    {
+      "name": "timestral-209m",
+      "params": {
+        "clip_nonnegative": false,
+        "symmetric_averaging": true
+      }
+    },
+    {
+      "name": "zero",
+      "params": {
+        "max_context": 4096,
+        "n_origins": 250
+      }
+    },
+    {
+      "name": "persistence",
+      "params": {
+        "max_context": 4096,
+        "n_origins": 250
+      }
+    },
+    {
+      "name": "moving_average",
+      "params": {
+        "max_context": 4096,
+        "n_origins": 250,
+        "window": 20
+      }
+    },
+    {
+      "name": "momentum",
+      "params": {
+        "lookback": 20,
+        "max_context": 4096,
+        "n_origins": 250
+      }
+    },
+    {
+      "name": "linear_trend",
+      "params": {
+        "max_context": 4096,
+        "n_origins": 250,
+        "window": 60
+      }
+    }
+  ],
+  "name": "stocks reconstructed 2012-2026 daily origins",
+  "notes": "",
+  "origin_end": "2026-09-29T00:00:00Z",
+  "origin_start": "2012-03-01T00:00:00Z",
+  "origin_stride": 1,
+  "outcome_side": null,
+  "price_field": "close",
+  "quantile_levels": [
+    0.01,
+    0.05,
+    0.1,
+    0.15,
+    0.2,
+    0.25,
+    0.3,
+    0.35,
+    0.4,
+    0.45,
+    0.5,
+    0.55,
+    0.6,
+    0.65,
+    0.7,
+    0.75,
+    0.8,
+    0.85,
+    0.9,
+    0.95,
+    0.99
+  ],
+  "reference_baseline": "zero",
+  "respect_closing_time": false,
+  "seed": 0,
+  "source": "yfinance",
+  "target": "log_return",
+  "targets_as_of": "2026-11-03T00:00:00Z"
+}
